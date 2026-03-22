@@ -523,172 +523,257 @@
 
     .colophon-detail dd a:hover { color: var(--white); border-color: var(--white); }
 
-    /* ── MESSAGE BOARD ── */
-    #message-board { border-bottom: 1px solid var(--gray-mid); }
 
-    .mb-form-row {
-      display: flex;
-      align-items: stretch;
+    /* ══ VISITOR LOG — prominent front-of-page ══ */
+    #visitor-log {
       border-bottom: 1px solid var(--gray-mid);
     }
 
-    .mb-field {
+    .vlog-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* LEFT: input panel */
+    .vlog-input-panel {
+      padding: 48px 44px;
+      border-right: 1px solid var(--gray-mid);
       display: flex;
       flex-direction: column;
-      border-right: 1px solid var(--gray-mid);
-      min-width: 180px;
+      justify-content: space-between;
+      gap: 32px;
     }
 
-    .mb-field--wide { flex: 1; }
+    .vlog-eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 12px;
+    }
 
-    .mb-label {
-      font-family: var(--mono);
+    .vlog-prompt {
+      font-family: var(--display);
+      font-size: clamp(36px, 4vw, 60px);
+      line-height: 0.95;
+      letter-spacing: 0.04em;
+    }
+
+    .vlog-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      line-height: 1.8;
+      margin-top: 12px;
+      max-width: 320px;
+    }
+
+    .vlog-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--gray-mid);
+    }
+
+    .vlog-field {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    .vlog-field:last-of-type { border-bottom: none; }
+
+    .vlog-field-label {
       font-size: 8px;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       color: rgba(255,255,255,0.2);
-      padding: 10px 18px 4px;
+      padding: 10px 16px 4px;
+      text-transform: uppercase;
     }
 
-    .mb-input {
+    .vlog-field input {
       background: none;
       border: none;
       outline: none;
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: 14px;
       color: var(--white);
-      padding: 4px 18px 12px;
-      width: 100%;
-      caret-color: white;
+      padding: 4px 16px 12px;
+      caret-color: rgba(255,255,255,0.8);
     }
 
-    .mb-input::placeholder { color: rgba(255,255,255,0.15); }
+    .vlog-field input::placeholder { color: rgba(255,255,255,0.13); }
 
-    .mb-submit {
-      background: none;
-      border: none;
-      border-left: 1px solid var(--gray-mid);
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      color: rgba(255,255,255,0.4);
-      padding: 0 28px;
-      cursor: pointer;
-      transition: color 0.2s, background 0.2s;
-      white-space: nowrap;
-    }
-
-    .mb-submit:hover { color: var(--white); background: rgba(255,255,255,0.04); }
-    .mb-submit:active { background: rgba(255,255,255,0.08); }
-
-    .mb-board {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      min-height: 180px;
-    }
-
-    .mb-loading {
-      grid-column: 1 / -1;
+    .vlog-actions {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-family: var(--mono);
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+
+    .vlog-count {
       font-size: 9px;
-      letter-spacing: 0.3em;
-      color: rgba(255,255,255,0.15);
-      animation: blink 1.4s step-end infinite;
+      color: rgba(255,255,255,0.18);
+      letter-spacing: 0.15em;
     }
 
-    .mb-entry {
-      border-right: 1px solid var(--gray-mid);
+    .vlog-btn {
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 12px 32px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .vlog-btn:hover { opacity: 0.82; }
+    .vlog-btn:disabled { opacity: 0.35; cursor: default; }
+
+    /* RIGHT: last 5 entries feed */
+    .vlog-feed-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .vlog-feed-header {
+      padding: 14px 24px;
       border-bottom: 1px solid var(--gray-mid);
-      padding: 14px 18px 16px;
-      position: relative;
-      overflow: hidden;
-      animation: mb-fade-in 0.4s ease;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .mb-entry:nth-child(4n) { border-right: none; }
+    .vlog-live-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--white);
+      opacity: 0.4;
+      animation: blink 1.8s step-end infinite;
+      display: inline-block;
+      margin-right: 6px;
+    }
 
-    @keyframes mb-fade-in {
-      from { opacity: 0; transform: translateY(6px); }
+    .vlog-entries {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .vlog-entry {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      align-items: start;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-mid);
+      gap: 0 16px;
+      animation: vlog-slide-in 0.35s cubic-bezier(0.16,1,0.3,1);
+      transition: background 0.2s;
+    }
+
+    .vlog-entry:last-child { border-bottom: none; }
+    .vlog-entry:hover { background: rgba(255,255,255,0.02); }
+
+    @keyframes vlog-slide-in {
+      from { opacity: 0; transform: translateY(-8px); }
       to   { opacity: 1; transform: none; }
     }
 
-    .mb-entry::before {
-      content: '▮';
-      position: absolute;
-      top: 10px; right: 12px;
-      font-size: 7px;
-      color: rgba(255,255,255,0.08);
+    .vlog-entry-idx {
+      font-size: 9px;
+      color: rgba(255,255,255,0.12);
+      letter-spacing: 0.1em;
+      padding-top: 3px;
     }
 
-    .mb-entry-user {
-      font-size: 10px;
+    .vlog-entry-body { min-width: 0; }
+
+    .vlog-entry-user {
       font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.08em;
       color: rgba(255,255,255,0.9);
-      letter-spacing: 0.1em;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
     }
 
-    .mb-entry-user::before {
+    .vlog-entry-user::before {
       content: '>';
-      color: rgba(255,255,255,0.3);
       font-size: 9px;
+      color: rgba(255,255,255,0.25);
     }
 
-    .mb-entry-msg {
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
+    .vlog-entry-user.is-new::after {
+      content: 'JUST NOW';
+      font-size: 7px;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 1px 5px;
+      font-weight: 400;
+    }
+
+    .vlog-entry-msg {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
       line-height: 1.5;
       word-break: break-word;
     }
 
-    .mb-entry-time {
-      margin-top: 10px;
+    .vlog-entry-time {
       font-size: 8px;
       color: rgba(255,255,255,0.15);
       letter-spacing: 0.1em;
+      white-space: nowrap;
+      padding-top: 3px;
     }
 
-    .mb-entry.mb-new .mb-entry-user::after {
-      content: 'NEW';
-      font-size: 7px;
-      letter-spacing: 0.15em;
-      color: rgba(255,255,255,0.3);
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 1px 4px;
-    }
-
-    .mb-empty {
-      grid-column: 1 / -1;
+    /* Empty state */
+    .vlog-empty {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 9px;
-      letter-spacing: 0.2em;
-      color: rgba(255,255,255,0.12);
-      padding: 48px;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.1);
+      padding: 48px 24px;
     }
 
-    .mb-flash {
+    /* Flash */
+    .vlog-flash {
       position: fixed;
-      bottom: 24px; left: 50%;
-      transform: translateX(-50%);
+      bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(8px);
       background: var(--white);
       color: var(--black);
+      font-family: var(--mono);
       font-size: 10px;
-      letter-spacing: 0.2em;
-      padding: 10px 24px;
-      z-index: 200;
+      letter-spacing: 0.22em;
+      padding: 11px 28px;
+      z-index: 300;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, transform 0.2s;
     }
 
-    .mb-flash.show { opacity: 1; }
+    .vlog-flash.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 860px) {
+      .vlog-wrapper { grid-template-columns: 1fr; }
+      .vlog-input-panel { border-right: none; border-bottom: 1px solid var(--gray-mid); }
+    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 920px) {
@@ -733,10 +818,9 @@
 <nav>
   <a class="nav-logo" href="index.html">INK LABS <span>ENG·RESEARCH·DIVISION</span></a>
   <ul class="nav-links">
-    <li><a href="work.html">Work</a></li>
-    <li><a href="capabilities.html">Capabilities</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="publications.html">Publications</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="film.html">Film</a></li>
+    <li><a href="experimental.html">Experimental</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
   <div class="nav-status">SYSTEMS ONLINE</div>
@@ -821,6 +905,51 @@
   </div>
 </div>
 
+<!-- ══ VISITOR LOG ══ -->
+<section id="visitor-log">
+  <div class="vlog-wrapper">
+
+    <!-- INPUT SIDE -->
+    <div class="vlog-input-panel">
+      <div>
+        <div class="vlog-eyebrow">// VISITOR LOG</div>
+        <div class="vlog-prompt">SIGN<br>THE<br>WALL.</div>
+        <p class="vlog-sub">Leave a note. Everyone who visits sees it.<br>
+        The last 5 entries are shown live.</p>
+      </div>
+
+      <div>
+        <div class="vlog-fields">
+          <div class="vlog-field">
+            <label class="vlog-field-label">// Handle</label>
+            <input id="vlog-user" type="text" maxlength="20" placeholder="anonymous" autocomplete="off" spellcheck="false" />
+          </div>
+          <div class="vlog-field">
+            <label class="vlog-field-label">// Message</label>
+            <input id="vlog-msg" type="text" maxlength="80" placeholder="was here…" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+        <div class="vlog-actions">
+          <span class="vlog-count" id="vlog-count">— VISITORS</span>
+          <button class="vlog-btn" id="vlog-btn">POST →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEED SIDE -->
+    <div class="vlog-feed-panel">
+      <div class="vlog-feed-header">
+        <span><span class="vlog-live-dot"></span>LIVE FEED</span>
+        <span>LAST 5 ENTRIES</span>
+      </div>
+      <div class="vlog-entries" id="vlog-entries">
+        <div class="vlog-empty">LOADING LOG…</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- ══ EDITORIAL LEAD — full-bleed feature ══ -->
 <div class="editorial-lead reveal">
   <img src="https://picsum.photos/seed/inkfeat01/1600/900" alt="Aerial swarm field deployment" />
@@ -860,92 +989,6 @@
   <div class="metric-cell reveal"><div class="val">$4.2M</div><div class="lbl">Funding Awarded</div></div>
   <div class="metric-cell reveal"><div class="val">23</div><div class="lbl">Industry Partners</div></div>
   <div class="metric-cell reveal"><div class="val">6</div><div class="lbl">Patents Filed</div></div>
-</div>
-
-<!-- ══ STRIP 2 — UI details, flipped ══ -->
-<div class="wt-strip wt-flip reveal">
-  <div class="wt-media">
-    <img src="https://picsum.photos/seed/inkwt02/900/600" alt="User interface details" />
-  </div>
-  <div class="wt-caption">
-    <div>
-      <div class="wt-label">HARDWARE / USER INTERFACE DETAILS</div>
-      <div class="wt-heading">Interfaces built for<br>operators, not engineers</div>
-      <p class="wt-body">Every system we ship includes a custom HMI designed around the
-      operator's mental model — not the system's internal architecture.
-      We prototype in hardware, not Figma.</p>
-    </div>
-    <div class="wt-footnote">
-      PREV. PROJECT: AGV PLATFORM<br>
-      STACK: ROS2 · C++ · CUDA
-    </div>
-  </div>
-</div>
-
-<!-- ══ FULL-BLEED 1 — field trial ══ -->
-<div class="wt-fullbleed reveal">
-  <img src="https://picsum.photos/seed/inkfull01/1600/560" alt="Field trial footage" />
-  <span class="wt-fullbleed-label">FIELD TRIAL 07 — SEPT 2024 — SWARM FORMATION TEST</span>
-  <span class="wt-fullbleed-label-right">16 AGENTS · 98% SUCCESS RATE</span>
-</div>
-
-<!-- ══ STRIP 3 — three operating modes ══ -->
-<div class="wt-strip reveal">
-  <div class="wt-media">
-    <img src="https://picsum.photos/seed/inkwt03/900/600" alt="Three control modes" />
-  </div>
-  <div class="wt-caption">
-    <div>
-      <div class="wt-label">SOFTWARE / THREE CONTROL MODES</div>
-      <div class="wt-heading">One runtime.<br>Three operating modes.</div>
-      <p class="wt-body">Teleoperated, semi-autonomous, and fully autonomous modes share
-      a single unified runtime — switching is latency-free and never
-      interrupts active trajectories in flight.</p>
-    </div>
-    <div class="wt-footnote">
-      LOOP TIME: 8ms · MESH RANGE: 4.2km<br>
-      RTOS: CUSTOM · LANG: C++ / PYTHON
-    </div>
-  </div>
-</div>
-
-<!-- ══ TWO-UP — sensor / point-cloud ══ -->
-<div class="wt-twoup">
-  <div class="wt-twoup-cell reveal">
-    <img src="https://picsum.photos/seed/inktwoup01/800/400" alt="IMU sensor fusion" />
-    <div class="wt-twoup-caption">Sensor fusion pipeline — IMU array at 1 kHz</div>
-  </div>
-  <div class="wt-twoup-cell reveal">
-    <img src="https://picsum.photos/seed/inktwoup02/800/400" alt="LiDAR point cloud" />
-    <div class="wt-twoup-caption">Point-cloud reconstruction — sub-cm resolution at 50 Hz</div>
-  </div>
-</div>
-
-<!-- ══ FULL-BLEED 2 — structural deployment ══ -->
-<div class="wt-fullbleed reveal">
-  <img src="https://picsum.photos/seed/inkfull02/1600/560" alt="Bridge sensor deployment" />
-  <span class="wt-fullbleed-label">STRUCTURAL HEALTH MONITOR — BRIDGE DEPLOYMENT — 2023</span>
-  <span class="wt-fullbleed-label-right">840+ SENSOR NODES · LIVE</span>
-</div>
-
-<!-- ══ STRIP 4 — embedded firmware, flipped ══ -->
-<div class="wt-strip wt-flip reveal">
-  <div class="wt-media">
-    <img src="https://picsum.photos/seed/inkwt04/900/600" alt="Embedded firmware detail" />
-  </div>
-  <div class="wt-caption">
-    <div>
-      <div class="wt-label">EMBEDDED / FIRMWARE DETAIL</div>
-      <div class="wt-heading">Bare-metal precision<br>on constrained silicon</div>
-      <p class="wt-body">Our embedded team writes deterministic firmware targeting
-      cycle-accurate timing budgets. No RTOS abstraction unless the mission
-      profile genuinely demands it — we prefer the predictability of bare metal.</p>
-    </div>
-    <div class="wt-footnote">
-      TARGET: STM32H7 · NXP RT1170<br>
-      TOOLS: CLANG · OPENOCD · CUSTOM LINKER
-    </div>
-  </div>
 </div>
 
 <!-- ══ RECENT WORK GRID ══ -->
@@ -1002,30 +1045,6 @@
   </dl>
 </div>
 
-<!-- ══ VISITOR LOG ══ -->
-<div class="section-header reveal">
-  <span class="section-num">—</span>
-  <span class="section-line"></span>
-  <span class="section-label">Visitor Log</span>
-  <span id="mb-count" style="font-size:9px;letter-spacing:.15em;color:rgba(255,255,255,.2);margin-left:16px;">LOADING…</span>
-</div>
-
-<div id="message-board">
-  <div class="mb-form-row reveal">
-    <div class="mb-field">
-      <label class="mb-label">// USERNAME</label>
-      <input class="mb-input" id="mb-username" type="text" maxlength="20" placeholder="anonymous" autocomplete="off" spellcheck="false" />
-    </div>
-    <div class="mb-field mb-field--wide">
-      <label class="mb-label">// MESSAGE</label>
-      <input class="mb-input" id="mb-message" type="text" maxlength="80" placeholder="was here…" autocomplete="off" spellcheck="false" />
-    </div>
-    <button class="mb-submit" id="mb-submit">POST_</button>
-  </div>
-  <div class="mb-board" id="mb-board">
-    <div class="mb-loading">LOADING LOG…</div>
-  </div>
-</div>
 
 </main>
 
@@ -1040,7 +1059,6 @@
   </ul>
 </footer>
 
-<div class="mb-flash" id="mb-flash">MESSAGE POSTED_</div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   /* ── SCROLL REVEAL with stagger ── */
@@ -1065,60 +1083,75 @@
     const y = ((e.clientY / window.innerHeight) * 2 - 1).toFixed(4);
     el.innerHTML = `LAT 33.7490° N<br>LON 84.3880° W<br>ALT 320 M<br><br>SYS.STATUS:OK<br>CUR.X:${x}<br>CUR.Y:${y}`;
   });
-
   /* ── VISITOR LOG ── */
-  const STORAGE_KEY = 'inklabs-visitor-log';
-  const MAX_ENTRIES = 222;
+  (function () {
+    const KEY = 'inklabs-visitor-log';
+    const MAX = 222;
 
-  const timeAgo = ts => {
-    const d = Date.now() - ts, m = Math.floor(d/60000), h = Math.floor(d/3600000), dy = Math.floor(d/86400000);
-    return m < 1 ? 'JUST NOW' : m < 60 ? `${m}M AGO` : h < 24 ? `${h}H AGO` : `${dy}D AGO`;
-  };
+    const ago = ts => {
+      const d = Date.now() - ts, m = Math.floor(d/60000), h = Math.floor(d/3600000), dy = Math.floor(d/86400000);
+      return m < 1 ? 'JUST NOW' : m < 60 ? m+'M AGO' : h < 24 ? h+'H AGO' : dy+'D AGO';
+    };
 
-  const sanitize = s => s.replace(/</g,'&lt;').replace(/>/g,'&gt;').trim();
+    const esc = s => s.replace(/</g,'&lt;').replace(/>/g,'&gt;').trim();
 
-  const loadEntries = async () => {
-    try { const r = await window.storage.get(STORAGE_KEY, true); return r ? JSON.parse(r.value) : []; }
-    catch { return []; }
-  };
+    const load = async () => {
+      try { const r = await window.storage.get(KEY, true); return r ? JSON.parse(r.value) : []; }
+      catch { return []; }
+    };
 
-  const saveEntries = async entries => window.storage.set(STORAGE_KEY, JSON.stringify(entries), true);
+    const save = async entries => window.storage.set(KEY, JSON.stringify(entries), true);
 
-  const renderBoard = entries => {
-    document.getElementById('mb-count').textContent = `${entries.length} VISITOR${entries.length!==1?'S':''} LOGGED`;
-    const board = document.getElementById('mb-board');
-    if (!entries.length) { board.innerHTML = '<div class="mb-empty">NO ENTRIES YET — BE THE FIRST_</div>'; return; }
-    board.innerHTML = [...entries].reverse().slice(0,32).map((e,i) => `
-      <div class="mb-entry${i===0?' mb-new':''}">
-        <div class="mb-entry-user">${sanitize(e.user)}</div>
-        <div class="mb-entry-msg">${sanitize(e.msg)}</div>
-        <div class="mb-entry-time">${timeAgo(e.ts)}</div>
-      </div>`).join('');
-  };
+    const render = entries => {
+      const countEl   = document.getElementById('vlog-count');
+      const feedEl    = document.getElementById('vlog-entries');
+      if (!countEl || !feedEl) return;
 
-  const postMessage = async () => {
-    const uEl = document.getElementById('mb-username');
-    const mEl = document.getElementById('mb-message');
-    const btn = document.getElementById('mb-submit');
-    const user = uEl.value.trim() || 'anonymous';
-    const msg  = mEl.value.trim();
-    if (!msg) { mEl.focus(); return; }
-    btn.textContent = 'POSTING…'; btn.disabled = true;
-    const entries = await loadEntries();
-    entries.push({ user: user.slice(0,20), msg: msg.slice(0,80), ts: Date.now() });
-    if (entries.length > MAX_ENTRIES) entries.splice(0, entries.length - MAX_ENTRIES);
-    await saveEntries(entries);
-    renderBoard(entries);
-    mEl.value = ''; btn.textContent = 'POST_'; btn.disabled = false;
-    const flash = document.getElementById('mb-flash');
-    flash.classList.add('show');
-    setTimeout(() => flash.classList.remove('show'), 1800);
-  };
+      countEl.textContent = entries.length + (entries.length !== 1 ? ' VISITORS' : ' VISITOR');
 
-  document.getElementById('mb-submit').addEventListener('click', postMessage);
-    document.getElementById('mb-message').addEventListener('keydown', e => { if (e.key==='Enter') postMessage(); });
-  loadEntries().then(renderBoard);
-  setInterval(() => loadEntries().then(renderBoard), 60000);
+      if (!entries.length) {
+        feedEl.innerHTML = '<div class="vlog-empty">NO ENTRIES YET — BE THE FIRST_</div>';
+        return;
+      }
+
+      const last5 = [...entries].reverse().slice(0, 5);
+      feedEl.innerHTML = last5.map((e, i) => `
+        <div class="vlog-entry">
+          <div class="vlog-entry-idx">${String(entries.length - i).padStart(3,'0')}</div>
+          <div class="vlog-entry-body">
+            <div class="vlog-entry-user${i === 0 ? ' is-new' : ''}">${esc(e.user)}</div>
+            <div class="vlog-entry-msg">${esc(e.msg)}</div>
+          </div>
+          <div class="vlog-entry-time">${ago(e.ts)}</div>
+        </div>`).join('');
+    };
+
+    const post = async () => {
+      const uEl = document.getElementById('vlog-user');
+      const mEl = document.getElementById('vlog-msg');
+      const btn = document.getElementById('vlog-btn');
+      const user = (uEl.value.trim() || 'anonymous').slice(0, 20);
+      const msg  = mEl.value.trim().slice(0, 80);
+      if (!msg) { mEl.focus(); mEl.style.outline = '1px solid rgba(255,255,255,0.4)'; return; }
+      mEl.style.outline = '';
+      btn.textContent = 'POSTING…'; btn.disabled = true;
+      const entries = await load();
+      entries.push({ user, msg, ts: Date.now() });
+      if (entries.length > MAX) entries.splice(0, entries.length - MAX);
+      await save(entries);
+      render(entries);
+      mEl.value = ''; btn.textContent = 'POST →'; btn.disabled = false;
+      const flash = document.getElementById('vlog-flash');
+      if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 2000); }
+    };
+
+    document.getElementById('vlog-btn')?.addEventListener('click', post);
+    document.getElementById('vlog-msg')?.addEventListener('keydown', e => { if (e.key === 'Enter') post(); });
+
+    load().then(render);
+    setInterval(() => load().then(render), 30000);
+  })();
+
 </script>
 
 <!-- ══ THREE.JS + GLB VIEWER ══ -->
@@ -1298,5 +1331,6 @@
 
 })();
 </script>
+<div class="vlog-flash" id="vlog-flash">ENTRY LOGGED_</div>
 </body>
 </html>

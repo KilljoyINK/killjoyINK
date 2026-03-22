@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — INK LABS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+
+    /* ══════════════════════════════════════════
+       SUPREME-INSPIRED PROJECT GRID
+       Black/white futuristic · .glb per card
+    ══════════════════════════════════════════ */
+
+    /* ── CATEGORY / FILTER BAR ── */
+    .filter-bar {
+      position: sticky;
+      top: 52px;
+      z-index: 90;
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--gray-mid);
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(8px);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      background: none;
+      border: none;
+      border-right: 1px solid var(--gray-mid);
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      padding: 12px 22px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .filter-btn:hover { color: var(--white); background: rgba(255,255,255,0.03); }
+
+    .filter-btn.active {
+      color: var(--white);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .filter-count {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      padding: 0 22px;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.2);
+      border-left: 1px solid var(--gray-mid);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── PRODUCT GRID (Supreme rhythm) ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-left: 1px solid var(--gray-mid);
+    }
+
+    .product-card {
+      border-right: 1px solid var(--gray-mid);
+      border-bottom: 1px solid var(--gray-mid);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .product-card[data-hidden="true"] {
+      display: none;
+    }
+
+    /* GLB viewer fills the card top */
+    .product-viewer {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .product-viewer canvas {
+      position: absolute;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    /* Subtle grid on each viewer */
+    .product-viewer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 0.3s;
+    }
+
+    .product-card:hover .product-viewer::after { opacity: 0.4; }
+
+    /* Loading indicator inside viewer */
+    .viewer-loader {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.18);
+      pointer-events: none;
+      animation: blink 1.6s step-end infinite;
+      transition: opacity 0.4s;
+    }
+
+    .viewer-loader.hidden { opacity: 0; }
+
+    /* Card meta — Supreme-style clean text row */
+    .product-meta {
+      padding: 14px 18px 18px;
+      border-top: 1px solid var(--gray-mid);
+    }
+
+    .product-name {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+      margin-bottom: 5px;
+      color: var(--white);
+    }
+
+    .product-sub {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .product-cat {
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .product-year {
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.18);
+    }
+
+    /* Hover arrow — top right */
+    .product-arrow {
+      position: absolute;
+      top: 12px; right: 14px;
+      font-size: 14px;
+      color: rgba(255,255,255,0);
+      z-index: 4;
+      transition: color 0.2s, transform 0.25s;
+      pointer-events: none;
+    }
+
+    .product-card:hover .product-arrow {
+      color: rgba(255,255,255,0.7);
+      transform: translate(2px, -2px);
+    }
+
+    /* Drop zone hint per card */
+    .product-drop-hint {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.14);
+      text-align: center;
+      line-height: 2;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .product-drop-hint.hidden { opacity: 0; }
+
+    /* Drag-over ring */
+    .product-viewer.drag-over { outline: 1px solid rgba(255,255,255,0.5); outline-offset: -1px; }
+
+    /* ── EMPTY STATE ── */
+    .grid-empty {
+      grid-column: 1 / -1;
+      padding: 80px 40px;
+      text-align: center;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.12);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .product-grid { grid-template-columns: 1fr; border-left: none; }
+      .product-card { border-right: none; }
+    }
+
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">INK LABS <span>ENG·RESEARCH·DIVISION</span></a>
+  <ul class="nav-links">
+    <li><a href="projects.html" class="active">Projects</a></li>
+    <li><a href="film.html">Film</a></li>
+    <li><a href="experimental.html">Experimental</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-status">SYSTEMS ONLINE</div>
+</nav>
+
+<main>
+
+  <!-- ── FILTER BAR ── -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-cat="all">All</button>
+    <button class="filter-btn" data-cat="robotics">Robotics</button>
+    <button class="filter-btn" data-cat="embedded">Embedded</button>
+    <button class="filter-btn" data-cat="vision">Vision</button>
+    <button class="filter-btn" data-cat="structural">Structural</button>
+    <button class="filter-btn" data-cat="autonomous">Autonomous</button>
+    <div class="filter-count" id="filterCount">9 PROJECTS</div>
+  </div>
+
+  <!-- ── PRODUCT GRID ── -->
+  <div class="product-grid" id="productGrid">
+
+    <!-- Card 001 -->
+    <div class="product-card" data-cat="autonomous">
+      <div class="product-viewer" id="pv-001" data-model="./model.glb">
+        <canvas id="pc-001"></canvas>
+        <div class="viewer-loader" id="pl-001">LOADING…</div>
+        <div class="product-drop-hint" id="pd-001">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">Autonomous Ground Vehicle</div>
+        <div class="product-sub">
+          <span class="product-cat">Autonomous</span>
+          <span class="product-year">2024</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 002 -->
+    <div class="product-card" data-cat="robotics">
+      <div class="product-viewer" id="pv-002" data-model="./model.glb">
+        <canvas id="pc-002"></canvas>
+        <div class="viewer-loader" id="pl-002">LOADING…</div>
+        <div class="product-drop-hint" id="pd-002">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">Soft Actuator Control</div>
+        <div class="product-sub">
+          <span class="product-cat">Robotics</span>
+          <span class="product-year">2024</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 003 -->
+    <div class="product-card" data-cat="structural">
+      <div class="product-viewer" id="pv-003" data-model="./model.glb">
+        <canvas id="pc-003"></canvas>
+        <div class="viewer-loader" id="pl-003">LOADING…</div>
+        <div class="product-drop-hint" id="pd-003">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">Structural Health Monitor</div>
+        <div class="product-sub">
+          <span class="product-cat">Structural</span>
+          <span class="product-year">2023</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 004 -->
+    <div class="product-card" data-cat="vision">
+      <div class="product-viewer" id="pv-004" data-model="./model.glb">
+        <canvas id="pc-004"></canvas>
+        <div class="viewer-loader" id="pl-004">LOADING…</div>
+        <div class="product-drop-hint" id="pd-004">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">LiDAR Terrain Mapping</div>
+        <div class="product-sub">
+          <span class="product-cat">Vision</span>
+          <span class="product-year">2023</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 005 -->
+    <div class="product-card" data-cat="robotics">
+      <div class="product-viewer" id="pv-005" data-model="./model.glb">
+        <canvas id="pc-005"></canvas>
+        <div class="viewer-loader" id="pl-005">LOADING…</div>
+        <div class="product-drop-hint" id="pd-005">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">Exoskeleton Assist Controller</div>
+        <div class="product-sub">
+          <span class="product-cat">Robotics</span>
+          <span class="product-year">2023</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 006 -->
+    <div class="product-card" data-cat="autonomous">
+      <div class="product-viewer" id="pv-006" data-model="./model.glb">
+        <canvas id="pc-006"></canvas>
+        <div class="viewer-loader" id="pl-006">LOADING…</div>
+        <div class="product-drop-hint" id="pd-006">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">Aerial Swarm System</div>
+        <div class="product-sub">
+          <span class="product-cat">Autonomous</span>
+          <span class="product-year">2024</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 007 -->
+    <div class="product-card" data-cat="embedded">
+      <div class="product-viewer" id="pv-007" data-model="./model.glb">
+        <canvas id="pc-007"></canvas>
+        <div class="viewer-loader" id="pl-007">LOADING…</div>
+        <div class="product-drop-hint" id="pd-007">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">Custom IMU Array</div>
+        <div class="product-sub">
+          <span class="product-cat">Embedded</span>
+          <span class="product-year">2023</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 008 -->
+    <div class="product-card" data-cat="vision">
+      <div class="product-viewer" id="pv-008" data-model="./model.glb">
+        <canvas id="pc-008"></canvas>
+        <div class="viewer-loader" id="pl-008">LOADING…</div>
+        <div class="product-drop-hint" id="pd-008">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">Stereo Vision Pipeline</div>
+        <div class="product-sub">
+          <span class="product-cat">Vision</span>
+          <span class="product-year">2022</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 009 -->
+    <div class="product-card" data-cat="embedded">
+      <div class="product-viewer" id="pv-009" data-model="./model.glb">
+        <canvas id="pc-009"></canvas>
+        <div class="viewer-loader" id="pl-009">LOADING…</div>
+        <div class="product-drop-hint" id="pd-009">DROP .GLB</div>
+      </div>
+      <span class="product-arrow">↗</span>
+      <div class="product-meta">
+        <div class="product-name">Bare-Metal RTOS Platform</div>
+        <div class="product-sub">
+          <span class="product-cat">Embedded</span>
+          <span class="product-year">2022</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-logo">INK LABS</div>
+  <div class="footer-copy">© 2024 INK LABS ENGINEERING. ALL RIGHTS RESERVED.</div>
+  <ul class="footer-links">
+    <li><a href="#">GitHub</a></li>
+    <li><a href="#">Scholar</a></li>
+    <li><a href="#">LinkedIn</a></li>
+  </ul>
+</footer>
+
+<!-- ══ THREE.JS ══ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/* ══ FILTER ══ */
+(function () {
+  const btns  = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.product-card');
+  const count = document.getElementById('filterCount');
+
+  function filter(cat) {
+    let visible = 0;
+    cards.forEach(c => {
+      const show = cat === 'all' || c.dataset.cat === cat;
+      c.dataset.hidden = show ? 'false' : 'true';
+      if (show) visible++;
+    });
+    count.textContent = visible + ' PROJECT' + (visible !== 1 ? 'S' : '');
+  }
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filter(btn.dataset.cat);
+    });
+  });
+})();
+
+/* ══ GLB VIEWER — one shared loader, separate scene per card ══ */
+(function () {
+  const loader = new THREE.GLTFLoader();
+
+  function initViewer(viewerId, canvasId, loaderId, dropHintId) {
+    const container = document.getElementById(viewerId);
+    const canvas    = document.getElementById(canvasId);
+    const loaderEl  = document.getElementById(loaderId);
+    const hintEl    = document.getElementById(dropHintId);
+    if (!container || !canvas) return;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.setClearColor(0x000000, 1);
+
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.001, 500);
+    camera.position.set(0, 0.8, 2.8);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping   = true;
+    controls.dampingFactor   = 0.07;
+    controls.enablePan       = false;
+    controls.enableZoom      = false;
+    controls.autoRotate      = true;
+    controls.autoRotateSpeed = 0.8;
+    controls.addEventListener('start', () => { controls.autoRotate = false; });
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const key  = new THREE.DirectionalLight(0xffffff, 1.0); key.position.set(3,4,3);  scene.add(key);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.3); fill.position.set(-3,1,-2); scene.add(fill);
+
+    // Floor grid
+    const grid = new THREE.GridHelper(6, 12, 0x222222, 0x141414);
+    scene.add(grid);
+
+    // Resize
+    function resize() {
+      const w = container.clientWidth, h = container.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    new ResizeObserver(resize).observe(container);
+    resize();
+
+    // Render
+    let animId;
+    (function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    })();
+
+    let currentModel = null;
+
+    function loadGLB(url) {
+      if (loaderEl) { loaderEl.textContent = 'LOADING…'; loaderEl.classList.remove('hidden'); }
+      if (hintEl)   hintEl.classList.add('hidden');
+      controls.autoRotate = true;
+      if (currentModel) { scene.remove(currentModel); currentModel = null; }
+
+      loader.load(url,
+        (gltf) => {
+          const model = gltf.scene;
+          const box   = new THREE.Box3().setFromObject(model);
+          const size  = box.getSize(new THREE.Vector3());
+          const cen   = box.getCenter(new THREE.Vector3());
+          const max   = Math.max(size.x, size.y, size.z);
+          const sc    = 1.6 / max;
+          model.scale.setScalar(sc);
+          model.position.sub(cen.multiplyScalar(sc));
+          const box2  = new THREE.Box3().setFromObject(model);
+          model.position.y -= box2.min.y;
+          grid.position.y   = box2.min.y - 0.003;
+          camera.position.set(0, size.y*sc*0.6, max*sc*2.2);
+          controls.target.set(0, size.y*sc*0.3, 0);
+          controls.update();
+          scene.add(model);
+          currentModel = model;
+          if (loaderEl) loaderEl.classList.add('hidden');
+          if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+        },
+        (xhr) => {
+          if (loaderEl && xhr.total) loaderEl.textContent = Math.round(xhr.loaded/xhr.total*100)+'%';
+        },
+        () => {
+          // Placeholder wireframe on error
+          if (loaderEl) loaderEl.classList.add('hidden');
+          if (hintEl)   hintEl.classList.remove('hidden');
+          loadPlaceholder();
+        }
+      );
+    }
+
+    function loadPlaceholder() {
+      if (currentModel) { scene.remove(currentModel); currentModel = null; }
+      const g = new THREE.Group();
+      g.add(new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.55, 1),
+        new THREE.MeshStandardMaterial({ color:0xffffff, wireframe:true, opacity:0.18, transparent:true })
+      ));
+      g.add(new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.5, 1),
+        new THREE.MeshStandardMaterial({ color: 0x060606 })
+      ));
+      let t = Math.random() * Math.PI * 2;
+      (function s() { requestAnimationFrame(s); t += 0.005; g.rotation.y = t; })();
+      scene.add(g); currentModel = g;
+      camera.position.set(0, 0.3, 2.2);
+      controls.target.set(0, 0, 0); controls.update();
+    }
+
+    loadGLB('./model.glb');
+
+    // Drag & drop per card
+    container.addEventListener('dragover', e => { e.preventDefault(); container.classList.add('drag-over'); });
+    container.addEventListener('dragleave', () => container.classList.remove('drag-over'));
+    container.addEventListener('drop', e => {
+      e.preventDefault(); container.classList.remove('drag-over');
+      const file = [...e.dataTransfer.files].find(f => /\.(glb|gltf)$/i.test(f.name));
+      if (file) loadGLB(URL.createObjectURL(file));
+    });
+  }
+
+  // Init all 9 cards
+  for (let i = 1; i <= 9; i++) {
+    const n = String(i).padStart(3,'0');
+    initViewer('pv-'+n, 'pc-'+n, 'pl-'+n, 'pd-'+n);
+  }
+})();
+
+/* ══ SCROLL REVEAL ══ */
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.06 });
+reveals.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
