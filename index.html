@@ -3,277 +3,1300 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ═══════════════════════════════════════════
-       ★ CUSTOMISE: Change the title & description
-       ═══════════════════════════════════════════ -->
-  <title>Ink Labs</title>
-  <meta name="description" content="A creative engineering studio born in Atlanta, based worldwide." />
-
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Typefaces -->
+  <title>INK LABS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Archivo:wght@300;400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── GLB HERO VIEWER ── */
+    #hero {
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+      border-bottom: 1px solid var(--gray-mid);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Override the shared style.css #hero which uses flex-column */
+    #hero .hero-top-label,
+    #hero .hero-coords,
+    #hero .hero-scroll-hint {
+      /* These are now inside .hero-panel */
+      position: absolute;
+    }
+
+    .hero-viewer {
+      flex: 0 0 60%;
+      position: relative;
+      border-right: 1px solid var(--gray-mid);
+      background: #000;
+      overflow: hidden;
+      cursor: grab;
+    }
+
+    .hero-viewer:active { cursor: grabbing; }
+
+    #glbCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Subtle grid overlay on viewer */
+    .viewer-grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* HUD bar at bottom of viewer */
+    .viewer-hud {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-top: 1px solid var(--gray-mid);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+    }
+
+    .viewer-hud-item {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .viewer-hud-sep {
+      color: rgba(255,255,255,0.12);
+      font-size: 10px;
+    }
+
+    /* Drop hint — shown when no model loaded */
+    .viewer-drop-hint {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+      text-align: center;
+      line-height: 2;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+
+    .viewer-drop-hint span {
+      font-size: 9px;
+      text-transform: none;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.1);
+    }
+
+    .viewer-drop-hint code {
+      font-family: var(--mono);
+      color: rgba(255,255,255,0.22);
+    }
+
+    .viewer-drop-hint.hidden { opacity: 0; }
+
+    /* Drag-over highlight */
+    .hero-viewer.drag-over { outline: 1px solid rgba(255,255,255,0.4); }
+
+    /* RIGHT panel */
+    .hero-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      padding: 0;
+    }
+
+    /* re-position labels inside panel */
+    .hero-panel .hero-top-label {
+      position: absolute;
+      top: 28px; left: 28px;
+    }
+
+    .hero-panel .hero-coords {
+      position: absolute;
+      top: 28px; right: 28px;
+    }
+
+    .hero-panel .hero-scroll-hint {
+      position: absolute;
+      bottom: 72px; left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* override shared hero-main */
+    .hero-panel .hero-main {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      grid-template-columns: unset;
+      padding: 28px;
+      border-top: 1px solid var(--gray-mid);
+    }
+
+    .hero-panel .hero-sub {
+      border-left: none;
+      padding-left: 0;
+      padding-top: 20px;
+      border-top: 1px solid var(--gray-mid);
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      #hero { flex-direction: column; }
+      .hero-viewer { flex: 0 0 50vh; border-right: none; border-bottom: 1px solid var(--gray-mid); }
+      .hero-panel { flex: 1; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-viewer { flex: 0 0 40vh; }
+    }
+
+    /* ─────────────────────────────────────────────
+       EDITORIAL WALK-THROUGH — index.html only
+       Mirrors the noplans.studio case-study rhythm:
+       full-bleed lead → strip (media+caption) →
+       metrics → flip-strip → full-bleed → two-up →
+       full-bleed → strip → work grid → colophon
+    ───────────────────────────────────────────── */
+
+    /* Full-bleed featured lead image */
+    .editorial-lead {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    .editorial-lead img {
+      width: 100%;
+      height: 80vh;
+      min-height: 480px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1) contrast(1.06);
+      transition: filter 1.2s ease;
+    }
+
+    .editorial-lead:hover img { filter: grayscale(0.45) contrast(1.04); }
+
+    /* Grid overlay on all media blocks — direct reference detail */
+    .editorial-lead::before,
+    .wt-media::after,
+    .wt-fullbleed::before,
+    .wt-twoup-cell::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.032) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Gradient + caption over lead image */
+    .editorial-lead-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 40px 36px;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+    }
+
+    .editorial-lead-title {
+      font-family: var(--display);
+      font-size: clamp(32px, 4.5vw, 64px);
+      line-height: 0.94;
+      letter-spacing: 0.04em;
+    }
+
+    .editorial-lead-meta {
+      text-align: right;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.45);
+      line-height: 2.2;
+    }
+
+    .editorial-lead-meta a {
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+      padding-bottom: 2px;
+      transition: color .2s, border-color .2s;
+    }
+
+    .editorial-lead-meta a:hover { color: var(--white); border-color: var(--white); }
+
+    /* ── WALK-THROUGH STRIPS ── */
+    .wt-strip {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      border-bottom: 1px solid var(--gray-mid);
+      min-height: 480px;
+    }
+
+    .wt-strip.wt-flip { grid-template-columns: 5fr 7fr; }
+
+    .wt-media {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .wt-media img {
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1) contrast(1.08);
+      transition: filter 0.9s ease, transform 1s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .wt-strip:hover .wt-media img {
+      filter: grayscale(0.3) contrast(1.04);
+      transform: scale(1.022);
+    }
+
+    .wt-caption {
+      padding: 52px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 1px solid var(--gray-mid);
+    }
+
+    .wt-strip.wt-flip .wt-caption {
+      border-left: none;
+      border-right: 1px solid var(--gray-mid);
+      order: -1;
+    }
+
+    .wt-label {
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 20px;
+    }
+
+    .wt-heading {
+      font-family: var(--sans);
+      font-weight: 800;
+      font-size: clamp(20px, 2.2vw, 32px);
+      line-height: 1.22;
+      letter-spacing: -0.01em;
+    }
+
+    .wt-body {
+      margin-top: 18px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.44);
+      line-height: 1.95;
+      max-width: 340px;
+    }
+
+    .wt-footnote {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--gray-mid);
+      font-size: 9px;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.15em;
+      line-height: 1.9;
+    }
+
+    /* ── FULL-BLEED STRIPS ── */
+    .wt-fullbleed {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    .wt-fullbleed img {
+      width: 100%;
+      height: 560px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1) contrast(1.05);
+      transition: filter 1s ease;
+    }
+
+    .wt-fullbleed:hover img { filter: grayscale(0.35) contrast(1.04); }
+
+    .wt-fullbleed-label {
+      position: absolute;
+      bottom: 22px; left: 28px;
+      z-index: 2;
+      font-size: 9px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+    }
+
+    .wt-fullbleed-label-right {
+      position: absolute;
+      bottom: 22px; right: 28px;
+      z-index: 2;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.22);
+      text-align: right;
+    }
+
+    /* ── TWO-UP MEDIA ── */
+    .wt-twoup {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    .wt-twoup-cell {
+      overflow: hidden;
+      position: relative;
+      border-right: 1px solid var(--gray-mid);
+    }
+
+    .wt-twoup-cell:last-child { border-right: none; }
+
+    .wt-twoup-cell img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1) contrast(1.07);
+      transition: filter 0.7s ease, transform 0.85s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .wt-twoup-cell:hover img {
+      filter: grayscale(0.25);
+      transform: scale(1.026);
+    }
+
+    .wt-twoup-caption {
+      padding: 14px 22px;
+      border-top: 1px solid var(--gray-mid);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.24);
+    }
+
+    /* ── METRICS ROW ── */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    .metric-cell {
+      padding: 36px 32px;
+      border-right: 1px solid var(--gray-mid);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-cell:last-child { border-right: none; }
+
+    .metric-cell::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.25), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .metric-cell:hover::after { transform: scaleX(1); }
+
+    .metric-cell .val {
+      font-family: var(--display);
+      font-size: clamp(44px, 4.5vw, 76px);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .metric-cell .lbl {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ── COLOPHON / CREDITS (like noplans metadata footer) ── */
+    .colophon {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    .colophon-left {
+      padding: 48px 40px;
+      border-right: 1px solid var(--gray-mid);
+      display: flex;
+      align-items: center;
+      min-width: 220px;
+    }
+
+    .colophon-title {
+      font-family: var(--display);
+      font-size: clamp(48px, 5.5vw, 88px);
+      line-height: 0.92;
+      letter-spacing: 0.04em;
+    }
+
+    .colophon-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .colophon-detail {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    .colophon-detail:last-child { border-bottom: none; }
+
+    .colophon-detail dt {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      padding: 14px 24px;
+      border-right: 1px solid var(--gray-mid);
+      min-width: 150px;
+      display: flex;
+      align-items: center;
+    }
+
+    .colophon-detail dd {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      padding: 14px 28px;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+    }
+
+    .colophon-detail dd a {
+      color: rgba(255,255,255,.55);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,.2);
+      padding-bottom: 1px;
+      transition: color .2s, border-color .2s;
+    }
+
+    .colophon-detail dd a:hover { color: var(--white); border-color: var(--white); }
+
+    /* ── MESSAGE BOARD ── */
+    #message-board { border-bottom: 1px solid var(--gray-mid); }
+
+    .mb-form-row {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    .mb-field {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--gray-mid);
+      min-width: 180px;
+    }
+
+    .mb-field--wide { flex: 1; }
+
+    .mb-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.2);
+      padding: 10px 18px 4px;
+    }
+
+    .mb-input {
+      background: none;
+      border: none;
+      outline: none;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--white);
+      padding: 4px 18px 12px;
+      width: 100%;
+      caret-color: white;
+    }
+
+    .mb-input::placeholder { color: rgba(255,255,255,0.15); }
+
+    .mb-submit {
+      background: none;
+      border: none;
+      border-left: 1px solid var(--gray-mid);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.4);
+      padding: 0 28px;
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+
+    .mb-submit:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+    .mb-submit:active { background: rgba(255,255,255,0.08); }
+
+    .mb-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      min-height: 180px;
+    }
+
+    .mb-loading {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: rgba(255,255,255,0.15);
+      animation: blink 1.4s step-end infinite;
+    }
+
+    .mb-entry {
+      border-right: 1px solid var(--gray-mid);
+      border-bottom: 1px solid var(--gray-mid);
+      padding: 14px 18px 16px;
+      position: relative;
+      overflow: hidden;
+      animation: mb-fade-in 0.4s ease;
+    }
+
+    .mb-entry:nth-child(4n) { border-right: none; }
+
+    @keyframes mb-fade-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .mb-entry::before {
+      content: '▮';
+      position: absolute;
+      top: 10px; right: 12px;
+      font-size: 7px;
+      color: rgba(255,255,255,0.08);
+    }
+
+    .mb-entry-user {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.1em;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mb-entry-user::before {
+      content: '>';
+      color: rgba(255,255,255,0.3);
+      font-size: 9px;
+    }
+
+    .mb-entry-msg {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .mb-entry-time {
+      margin-top: 10px;
+      font-size: 8px;
+      color: rgba(255,255,255,0.15);
+      letter-spacing: 0.1em;
+    }
+
+    .mb-entry.mb-new .mb-entry-user::after {
+      content: 'NEW';
+      font-size: 7px;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 1px 4px;
+    }
+
+    .mb-empty {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.12);
+      padding: 48px;
+    }
+
+    .mb-flash {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--white);
+      color: var(--black);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      padding: 10px 24px;
+      z-index: 200;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .mb-flash.show { opacity: 1; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 920px) {
+      .wt-strip,
+      .wt-strip.wt-flip { grid-template-columns: 1fr; min-height: auto; }
+      .wt-caption,
+      .wt-strip.wt-flip .wt-caption {
+        border-left: none; border-right: none;
+        border-top: 1px solid var(--gray-mid);
+        order: 1;
+      }
+      .wt-strip.wt-flip .wt-media { order: 0; }
+      .wt-media img { min-height: 300px; height: 300px; }
+      .metrics-row { grid-template-columns: 1fr 1fr; }
+      .metric-cell:nth-child(2) { border-right: none; }
+      .metric-cell:nth-child(3) { border-top: 1px solid var(--gray-mid); }
+      .colophon { flex-direction: column; }
+      .colophon-left { border-right: none; border-bottom: 1px solid var(--gray-mid); min-width: 0; }
+      .mb-board { grid-template-columns: 1fr 1fr; }
+      .mb-entry:nth-child(4n) { border-right: 1px solid var(--gray-mid); }
+      .mb-entry:nth-child(2n) { border-right: none; }
+    }
+
+    @media (max-width: 600px) {
+      .wt-twoup { grid-template-columns: 1fr; }
+      .wt-twoup-cell { border-right: none; border-bottom: 1px solid var(--gray-mid); }
+      .wt-twoup-cell img { height: 280px; }
+      .editorial-lead img { height: 55vh; }
+      .wt-fullbleed img { height: 320px; }
+      .mb-form-row { flex-wrap: wrap; }
+      .mb-field { min-width: 50%; border-bottom: 1px solid var(--gray-mid); }
+      .mb-field--wide { min-width: 100%; }
+      .mb-submit { width: 100%; border-left: none; border-top: 1px solid var(--gray-mid); padding: 14px; }
+      .colophon-detail dt { min-width: 110px; padding: 12px 14px; }
+      .colophon-detail dd { padding: 12px 18px; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- ─────────────────────────────────────
-       LOADING SCREEN
-       ───────────────────────────────────── -->
-  <div id="loader">
-    <div class="loader-inner">
-      <!-- ★ CUSTOMISE: Your studio name -->
-      <span class="loader-name">YOUR NAME</span>
-      <div class="loader-bar-track">
-        <div class="loader-bar"></div>
-      </div>
-      <span class="loader-pct">0%</span>
+<!-- ══ NAV ══ -->
+<nav>
+  <a class="nav-logo" href="index.html">INK LABS <span>ENG·RESEARCH·DIVISION</span></a>
+  <ul class="nav-links">
+    <li><a href="work.html">Work</a></li>
+    <li><a href="capabilities.html">Capabilities</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="publications.html">Publications</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-status">SYSTEMS ONLINE</div>
+</nav>
+
+<main>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+
+  <!-- LEFT — interactive 3D viewer -->
+  <div class="hero-viewer" id="heroViewer">
+    <canvas id="glbCanvas"></canvas>
+
+    <!-- Grid overlay stays on top of canvas -->
+    <div class="viewer-grid-overlay"></div>
+
+    <!-- Status bar along bottom of viewer -->
+    <div class="viewer-hud">
+      <span class="viewer-hud-item" id="viewerStatus">INITIALISING…</span>
+      <span class="viewer-hud-sep">·</span>
+      <span class="viewer-hud-item">DRAG TO ROTATE</span>
+      <span class="viewer-hud-sep">·</span>
+      <span class="viewer-hud-item">SCROLL TO ZOOM</span>
+    </div>
+
+    <!-- Drop zone hint when no model -->
+    <div class="viewer-drop-hint" id="viewerDropHint">
+      DROP .GLB FILE HERE<br>
+      <span>or place <code>model.glb</code> in repo root</span>
     </div>
   </div>
 
-
-  <!-- ─────────────────────────────────────
-       CURSOR DOT
-       ───────────────────────────────────── -->
-  <div class="cursor"></div>
-
-
-  <!-- ─────────────────────────────────────
-       HEADER / NAV
-       ───────────────────────────────────── -->
-  <header id="header">
-    <div class="header-left">
-      <!-- ★ CUSTOMISE: Your studio name -->
-      <a href="#" class="wordmark">YOUR NAME</a>
-    </div>
-    <nav class="header-right">
-      <a href="#work"   class="nav-link">Work</a>
-      <a href="#about"  class="nav-link">About</a>
-      <a href="#contact" class="nav-link">Contact</a>
-    </nav>
-  </header>
-
-
-  <!-- ─────────────────────────────────────
-       HERO — FULL-SCREEN INTRO
-       ───────────────────────────────────── -->
-  <section id="hero">
-    <!--
-      ★ CUSTOMISE: Replace "images/hero.jpg" with your own image.
-        Recommended size: 2560 × 1440 px, landscape.
-        You can also use a video: swap <img> for <video autoplay muted loop playsinline>
-    -->
-    <div class="hero-media">
-      <img src="images/hero.jpg" alt="Hero image" class="hero-img" />
+  <!-- RIGHT — text panel -->
+  <div class="hero-panel">
+    <div class="hero-top-label">INK LABS / EST. 2018</div>
+    <div class="hero-coords" id="heroCoords">
+      LAT 33.7490° N<br>LON 84.3880° W<br>ALT 320 M<br><br>SYS.STATUS:OK<br>CUR.X:0.0000<br>CUR.Y:0.0000
     </div>
 
-    <div class="hero-copy">
-      <!-- ★ CUSTOMISE: Your tagline -->
-      <p class="hero-tagline">
-        An art direction studio,<br />
-        based in <em>your city</em>.
-      </p>
-    </div>
-
-    <div class="hero-scroll-hint">↓</div>
-  </section>
-
-
-  <!-- ─────────────────────────────────────
-       WORK GRID
-       ───────────────────────────────────── -->
-  <section id="work">
-    <div class="section-label">Selected Work</div>
-
-    <div class="grid">
-
-      <!--
-        ═══════════════════════════════════════════════════
-        ★ HOW TO ADD / EDIT PROJECTS
-          1. Copy one <article class="project"> block.
-          2. Replace the <img src="..."> with your image path.
-          3. Edit the project title, tags, and year.
-          4. Optionally link the title to a case-study page.
-          Recommended image sizes:
-            Large  (data-size="large")  → 1600 × 1000 px
-            Medium (data-size="medium") → 900 × 700 px
-            Small  (data-size="small")  → 700 × 700 px
-        ═══════════════════════════════════════════════════
-      -->
-
-      <!-- Project 1 — large tile -->
-      <article class="project" data-size="large">
-        <div class="project-media">
-          <img src="images/project-01.jpg" alt="Project One" loading="lazy" />
-          <div class="project-overlay"></div>
+    <div class="hero-main">
+      <h1 class="hero-title">INK<br>LABS</h1>
+      <div class="hero-sub">
+        <p>A research division pushing the boundary between prototype and production.
+        We build systems that work under pressure — from embedded firmware
+        to autonomous control architectures.</p>
+        <div class="hero-tags">
+          <span class="tag">Robotics</span>
+          <span class="tag">Embedded Systems</span>
+          <span class="tag">Computer Vision</span>
+          <span class="tag">Structural Analysis</span>
+          <span class="tag">Control Systems</span>
+          <span class="tag">AI Integration</span>
         </div>
-        <div class="project-meta">
-          <span class="project-index">01</span>
-          <div class="project-info">
-            <!-- ★ CUSTOMISE -->
-            <h2 class="project-title">Project Title One</h2>
-            <span class="project-tags">Brand Identity — 2024</span>
-          </div>
-        </div>
-      </article>
-
-      <!-- Project 2 — medium tile -->
-      <article class="project" data-size="medium">
-        <div class="project-media">
-          <img src="images/project-02.jpg" alt="Project Two" loading="lazy" />
-          <div class="project-overlay"></div>
-        </div>
-        <div class="project-meta">
-          <span class="project-index">02</span>
-          <div class="project-info">
-            <h2 class="project-title">Project Title Two</h2>
-            <span class="project-tags">Campaign — 2024</span>
-          </div>
-        </div>
-      </article>
-
-      <!-- Project 3 — medium tile -->
-      <article class="project" data-size="medium">
-        <div class="project-media">
-          <img src="images/project-03.jpg" alt="Project Three" loading="lazy" />
-          <div class="project-overlay"></div>
-        </div>
-        <div class="project-meta">
-          <span class="project-index">03</span>
-          <div class="project-info">
-            <h2 class="project-title">Project Title Three</h2>
-            <span class="project-tags">Editorial — 2023</span>
-          </div>
-        </div>
-      </article>
-
-      <!-- Project 4 — small tile -->
-      <article class="project" data-size="small">
-        <div class="project-media">
-          <img src="images/project-04.jpg" alt="Project Four" loading="lazy" />
-          <div class="project-overlay"></div>
-        </div>
-        <div class="project-meta">
-          <span class="project-index">04</span>
-          <div class="project-info">
-            <h2 class="project-title">Project Title Four</h2>
-            <span class="project-tags">Print — 2023</span>
-          </div>
-        </div>
-      </article>
-
-      <!-- Project 5 — small tile -->
-      <article class="project" data-size="small">
-        <div class="project-media">
-          <img src="images/project-05.jpg" alt="Project Five" loading="lazy" />
-          <div class="project-overlay"></div>
-        </div>
-        <div class="project-meta">
-          <span class="project-index">05</span>
-          <div class="project-info">
-            <h2 class="project-title">Project Title Five</h2>
-            <span class="project-tags">Digital — 2023</span>
-          </div>
-        </div>
-      </article>
-
-      <!-- Project 6 — large tile -->
-      <article class="project" data-size="large">
-        <div class="project-media">
-          <img src="images/project-06.jpg" alt="Project Six" loading="lazy" />
-          <div class="project-overlay"></div>
-        </div>
-        <div class="project-meta">
-          <span class="project-index">06</span>
-          <div class="project-info">
-            <h2 class="project-title">Project Title Six</h2>
-            <span class="project-tags">Art Direction — 2022</span>
-          </div>
-        </div>
-      </article>
-
-    </div><!-- /grid -->
-  </section>
-
-
-  <!-- ─────────────────────────────────────
-       ABOUT
-       ───────────────────────────────────── -->
-  <section id="about">
-    <div class="about-inner">
-      <div class="about-image-col">
-        <!--
-          ★ CUSTOMISE: Replace with a portrait or studio photo.
-          Recommended: 800 × 1000 px, portrait.
-        -->
-        <img src="images/about.jpg" alt="About photo" class="about-img" />
-      </div>
-
-      <div class="about-text-col">
-        <div class="section-label">About</div>
-
-        <!-- ★ CUSTOMISE: Your bio paragraphs -->
-        <p class="about-body">
-          YOUR NAME is an independent art direction studio founded in
-          [year] by [your name]. The studio works at the intersection
-          of visual identity, editorial, and campaign — collaborating
-          with brands and cultural institutions to produce work that
-          is precise, considered, and enduring.
-        </p>
-        <p class="about-body">
-          Clients have included [Client A], [Client B], and [Client C].
-          Based in [your city]; available worldwide.
-        </p>
-
-        <!-- ★ CUSTOMISE: Add, remove, or rename services -->
-        <ul class="services-list">
-          <li>Art Direction</li>
-          <li>Brand Identity</li>
-          <li>Editorial Design</li>
-          <li>Campaign</li>
-          <li>Print</li>
-        </ul>
       </div>
     </div>
-  </section>
 
+    <div class="hero-scroll-hint">SCROLL</div>
+  </div>
 
-  <!-- ─────────────────────────────────────
-       CONTACT
-       ───────────────────────────────────── -->
-  <section id="contact">
-    <div class="contact-inner">
-      <div class="section-label">Contact</div>
+</section>
 
-      <a href="mailto:hello@yourstudio.com" class="contact-email">
-        <!-- ★ CUSTOMISE: your email address -->
-        hello@yourstudio.com
-      </a>
+<!-- ══ TICKER ══ -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span class="ticker-item">Autonomous Systems <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Embedded Firmware <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Computer Vision <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Structural Analysis <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Real-Time Control <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Human-Machine Interfaces <span class="ticker-dot"></span></span>
+    <span class="ticker-item">MEMS &amp; Sensors <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Edge Computing <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Autonomous Systems <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Embedded Firmware <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Computer Vision <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Structural Analysis <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Real-Time Control <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Human-Machine Interfaces <span class="ticker-dot"></span></span>
+    <span class="ticker-item">MEMS &amp; Sensors <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Edge Computing <span class="ticker-dot"></span></span>
+  </div>
+</div>
 
-      <div class="contact-links">
-        <!-- ★ CUSTOMISE: your social/external links — delete any you don't use -->
-        <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="files/press-kit.pdf" target="_blank">Press Kit ↗</a>
+<!-- ══ EDITORIAL LEAD — full-bleed feature ══ -->
+<div class="editorial-lead reveal">
+  <img src="https://picsum.photos/seed/inkfeat01/1600/900" alt="Aerial swarm field deployment" />
+  <div class="editorial-lead-caption">
+    <div class="editorial-lead-title">AERIAL<br>SWARM<br>SYSTEM</div>
+    <div class="editorial-lead-meta">
+      FEATURED PROJECT<br>
+      2024 — ACTIVE<br>
+      <a href="work.html">VIEW PROJECT →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STRIP 1 — site walk-through ══ -->
+<div class="wt-strip reveal">
+  <div class="wt-media">
+    <img src="https://picsum.photos/seed/inkwt01/900/600" alt="Lab interior walk-through" />
+  </div>
+  <div class="wt-caption">
+    <div>
+      <div class="wt-label">LAB OVERVIEW / SITE WALK-THROUGH</div>
+      <div class="wt-heading">Where hardware meets<br>intelligent control</div>
+      <p class="wt-body">Our 4,200 sq ft facility houses precision machining, PCB fabrication,
+      a motion-capture volume, and a full software stack — letting us close
+      the design loop from CAD to deployment without leaving the building.</p>
+    </div>
+    <div class="wt-footnote">
+      ALPHARETTA, GA · ROOM 4.112<br>
+      EST. 2018 · 12 RESEARCHERS
+    </div>
+  </div>
+</div>
+
+<!-- ══ METRICS ROW ══ -->
+<div class="metrics-row">
+  <div class="metric-cell reveal"><div class="val">47</div><div class="lbl">Publications</div></div>
+  <div class="metric-cell reveal"><div class="val">$4.2M</div><div class="lbl">Funding Awarded</div></div>
+  <div class="metric-cell reveal"><div class="val">23</div><div class="lbl">Industry Partners</div></div>
+  <div class="metric-cell reveal"><div class="val">6</div><div class="lbl">Patents Filed</div></div>
+</div>
+
+<!-- ══ STRIP 2 — UI details, flipped ══ -->
+<div class="wt-strip wt-flip reveal">
+  <div class="wt-media">
+    <img src="https://picsum.photos/seed/inkwt02/900/600" alt="User interface details" />
+  </div>
+  <div class="wt-caption">
+    <div>
+      <div class="wt-label">HARDWARE / USER INTERFACE DETAILS</div>
+      <div class="wt-heading">Interfaces built for<br>operators, not engineers</div>
+      <p class="wt-body">Every system we ship includes a custom HMI designed around the
+      operator's mental model — not the system's internal architecture.
+      We prototype in hardware, not Figma.</p>
+    </div>
+    <div class="wt-footnote">
+      PREV. PROJECT: AGV PLATFORM<br>
+      STACK: ROS2 · C++ · CUDA
+    </div>
+  </div>
+</div>
+
+<!-- ══ FULL-BLEED 1 — field trial ══ -->
+<div class="wt-fullbleed reveal">
+  <img src="https://picsum.photos/seed/inkfull01/1600/560" alt="Field trial footage" />
+  <span class="wt-fullbleed-label">FIELD TRIAL 07 — SEPT 2024 — SWARM FORMATION TEST</span>
+  <span class="wt-fullbleed-label-right">16 AGENTS · 98% SUCCESS RATE</span>
+</div>
+
+<!-- ══ STRIP 3 — three operating modes ══ -->
+<div class="wt-strip reveal">
+  <div class="wt-media">
+    <img src="https://picsum.photos/seed/inkwt03/900/600" alt="Three control modes" />
+  </div>
+  <div class="wt-caption">
+    <div>
+      <div class="wt-label">SOFTWARE / THREE CONTROL MODES</div>
+      <div class="wt-heading">One runtime.<br>Three operating modes.</div>
+      <p class="wt-body">Teleoperated, semi-autonomous, and fully autonomous modes share
+      a single unified runtime — switching is latency-free and never
+      interrupts active trajectories in flight.</p>
+    </div>
+    <div class="wt-footnote">
+      LOOP TIME: 8ms · MESH RANGE: 4.2km<br>
+      RTOS: CUSTOM · LANG: C++ / PYTHON
+    </div>
+  </div>
+</div>
+
+<!-- ══ TWO-UP — sensor / point-cloud ══ -->
+<div class="wt-twoup">
+  <div class="wt-twoup-cell reveal">
+    <img src="https://picsum.photos/seed/inktwoup01/800/400" alt="IMU sensor fusion" />
+    <div class="wt-twoup-caption">Sensor fusion pipeline — IMU array at 1 kHz</div>
+  </div>
+  <div class="wt-twoup-cell reveal">
+    <img src="https://picsum.photos/seed/inktwoup02/800/400" alt="LiDAR point cloud" />
+    <div class="wt-twoup-caption">Point-cloud reconstruction — sub-cm resolution at 50 Hz</div>
+  </div>
+</div>
+
+<!-- ══ FULL-BLEED 2 — structural deployment ══ -->
+<div class="wt-fullbleed reveal">
+  <img src="https://picsum.photos/seed/inkfull02/1600/560" alt="Bridge sensor deployment" />
+  <span class="wt-fullbleed-label">STRUCTURAL HEALTH MONITOR — BRIDGE DEPLOYMENT — 2023</span>
+  <span class="wt-fullbleed-label-right">840+ SENSOR NODES · LIVE</span>
+</div>
+
+<!-- ══ STRIP 4 — embedded firmware, flipped ══ -->
+<div class="wt-strip wt-flip reveal">
+  <div class="wt-media">
+    <img src="https://picsum.photos/seed/inkwt04/900/600" alt="Embedded firmware detail" />
+  </div>
+  <div class="wt-caption">
+    <div>
+      <div class="wt-label">EMBEDDED / FIRMWARE DETAIL</div>
+      <div class="wt-heading">Bare-metal precision<br>on constrained silicon</div>
+      <p class="wt-body">Our embedded team writes deterministic firmware targeting
+      cycle-accurate timing budgets. No RTOS abstraction unless the mission
+      profile genuinely demands it — we prefer the predictability of bare metal.</p>
+    </div>
+    <div class="wt-footnote">
+      TARGET: STM32H7 · NXP RT1170<br>
+      TOOLS: CLANG · OPENOCD · CUSTOM LINKER
+    </div>
+  </div>
+</div>
+
+<!-- ══ RECENT WORK GRID ══ -->
+<div class="section-header reveal">
+  <span class="section-num">—</span>
+  <span class="section-line"></span>
+  <span class="section-label">Recent Work</span>
+  <a href="work.html" style="font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.3);text-decoration:none;white-space:nowrap;margin-left:16px;">VIEW ALL →</a>
+</div>
+
+<div class="projects-grid">
+  <div class="proj-card proj-card--wide reveal">
+    <div class="proj-thumb">
+      <img src="https://picsum.photos/seed/robot1/900/506" alt="Autonomous Ground Vehicle" loading="lazy" />
+    </div>
+    <div class="proj-meta">
+      <div class="proj-index">PROJ — 001 / 2024</div>
+      <h3 class="proj-title">Autonomous Ground Vehicle Platform</h3>
+      <p class="proj-desc">Full-stack autonomous navigation system integrating LiDAR, stereo vision, and real-time path planning.</p>
+      <div class="proj-tags">
+        <span class="proj-tag">ROS2</span><span class="proj-tag">SLAM</span><span class="proj-tag">C++</span>
       </div>
     </div>
-  </section>
+    <span class="proj-arrow">↗</span>
+  </div>
+  <div class="proj-card proj-card--med reveal">
+    <div class="proj-thumb">
+      <img src="https://picsum.photos/seed/soft2/700/525" alt="Soft Actuator" loading="lazy" />
+    </div>
+    <div class="proj-meta">
+      <div class="proj-index">PROJ — 002 / 2024</div>
+      <h3 class="proj-title">Soft Actuator Control System</h3>
+      <p class="proj-desc">Pneumatic soft-robot actuator array with closed-loop pressure control.</p>
+      <div class="proj-tags">
+        <span class="proj-tag">Soft Robotics</span><span class="proj-tag">FEA</span>
+      </div>
+    </div>
+    <span class="proj-arrow">↗</span>
+  </div>
+</div>
 
+<!-- ══ COLOPHON ══ -->
+<div class="colophon reveal">
+  <div class="colophon-left">
+    <div class="colophon-title">INK<br>LABS<br>2024</div>
+  </div>
+  <dl class="colophon-details">
+    <div class="colophon-detail"><dt>Year</dt><dd>2018 — Present</dd></div>
+    <div class="colophon-detail"><dt>Location</dt><dd>Alpharetta, Georgia</dd></div>
+    <div class="colophon-detail"><dt>Affiliations</dt><dd>IEEE · ACM · AIAA · NSF · DARPA</dd></div>
+    <div class="colophon-detail"><dt>Director</dt><dd>Dr. Sara Chen</dd></div>
+    <div class="colophon-detail"><dt>P.I.</dt><dd>Prof. Marcus Webb</dd></div>
+    <div class="colophon-detail"><dt>Contact</dt><dd><a href="/cdn-cgi/l/email-protection#aac6cbc8eac3c4c1c6cbc8d984cfcedf"><span class="__cf_email__" data-cfemail="e5898487a58c8b8e89848796cb808190">[email&#160;protected]</span></a></dd></div>
+  </dl>
+</div>
 
-  <!-- ─────────────────────────────────────
-       FOOTER
-       ───────────────────────────────────── -->
-  <footer id="footer">
-    <span class="footer-left">
-      <!-- ★ CUSTOMISE: your name & version -->
-      © <span id="year"></span> YOUR NAME. V1.0
-    </span>
-    <span class="footer-right">All Rights Reserved.</span>
-  </footer>
+<!-- ══ VISITOR LOG ══ -->
+<div class="section-header reveal">
+  <span class="section-num">—</span>
+  <span class="section-line"></span>
+  <span class="section-label">Visitor Log</span>
+  <span id="mb-count" style="font-size:9px;letter-spacing:.15em;color:rgba(255,255,255,.2);margin-left:16px;">LOADING…</span>
+</div>
 
+<div id="message-board">
+  <div class="mb-form-row reveal">
+    <div class="mb-field">
+      <label class="mb-label">// USERNAME</label>
+      <input class="mb-input" id="mb-username" type="text" maxlength="20" placeholder="anonymous" autocomplete="off" spellcheck="false" />
+    </div>
+    <div class="mb-field mb-field--wide">
+      <label class="mb-label">// MESSAGE</label>
+      <input class="mb-input" id="mb-message" type="text" maxlength="80" placeholder="was here…" autocomplete="off" spellcheck="false" />
+    </div>
+    <button class="mb-submit" id="mb-submit">POST_</button>
+  </div>
+  <div class="mb-board" id="mb-board">
+    <div class="mb-loading">LOADING LOG…</div>
+  </div>
+</div>
 
-  <script src="script.js"></script>
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-logo">INK LABS</div>
+  <div class="footer-copy">© 2024 INK LABS ENGINEERING. ALL RIGHTS RESERVED.</div>
+  <ul class="footer-links">
+    <li><a href="#">GitHub</a></li>
+    <li><a href="#">Scholar</a></li>
+    <li><a href="#">LinkedIn</a></li>
+  </ul>
+</footer>
+
+<div class="mb-flash" id="mb-flash">MESSAGE POSTED_</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  /* ── SCROLL REVEAL with stagger ── */
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const siblings = [...(entry.target.parentElement?.querySelectorAll('.reveal:not(.visible)') || [])];
+      const idx = siblings.indexOf(entry.target);
+      entry.target.style.transitionDelay = Math.min(idx * 70, 280) + 'ms';
+      entry.target.classList.add('visible');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => io.observe(el));
+
+  /* ── CURSOR COORDINATES ── */
+  document.addEventListener('mousemove', e => {
+    const el = document.getElementById('heroCoords');
+    if (!el) return;
+    const x = ((e.clientX / window.innerWidth) * 2 - 1).toFixed(4);
+    const y = ((e.clientY / window.innerHeight) * 2 - 1).toFixed(4);
+    el.innerHTML = `LAT 33.7490° N<br>LON 84.3880° W<br>ALT 320 M<br><br>SYS.STATUS:OK<br>CUR.X:${x}<br>CUR.Y:${y}`;
+  });
+
+  /* ── VISITOR LOG ── */
+  const STORAGE_KEY = 'inklabs-visitor-log';
+  const MAX_ENTRIES = 222;
+
+  const timeAgo = ts => {
+    const d = Date.now() - ts, m = Math.floor(d/60000), h = Math.floor(d/3600000), dy = Math.floor(d/86400000);
+    return m < 1 ? 'JUST NOW' : m < 60 ? `${m}M AGO` : h < 24 ? `${h}H AGO` : `${dy}D AGO`;
+  };
+
+  const sanitize = s => s.replace(/</g,'&lt;').replace(/>/g,'&gt;').trim();
+
+  const loadEntries = async () => {
+    try { const r = await window.storage.get(STORAGE_KEY, true); return r ? JSON.parse(r.value) : []; }
+    catch { return []; }
+  };
+
+  const saveEntries = async entries => window.storage.set(STORAGE_KEY, JSON.stringify(entries), true);
+
+  const renderBoard = entries => {
+    document.getElementById('mb-count').textContent = `${entries.length} VISITOR${entries.length!==1?'S':''} LOGGED`;
+    const board = document.getElementById('mb-board');
+    if (!entries.length) { board.innerHTML = '<div class="mb-empty">NO ENTRIES YET — BE THE FIRST_</div>'; return; }
+    board.innerHTML = [...entries].reverse().slice(0,32).map((e,i) => `
+      <div class="mb-entry${i===0?' mb-new':''}">
+        <div class="mb-entry-user">${sanitize(e.user)}</div>
+        <div class="mb-entry-msg">${sanitize(e.msg)}</div>
+        <div class="mb-entry-time">${timeAgo(e.ts)}</div>
+      </div>`).join('');
+  };
+
+  const postMessage = async () => {
+    const uEl = document.getElementById('mb-username');
+    const mEl = document.getElementById('mb-message');
+    const btn = document.getElementById('mb-submit');
+    const user = uEl.value.trim() || 'anonymous';
+    const msg  = mEl.value.trim();
+    if (!msg) { mEl.focus(); return; }
+    btn.textContent = 'POSTING…'; btn.disabled = true;
+    const entries = await loadEntries();
+    entries.push({ user: user.slice(0,20), msg: msg.slice(0,80), ts: Date.now() });
+    if (entries.length > MAX_ENTRIES) entries.splice(0, entries.length - MAX_ENTRIES);
+    await saveEntries(entries);
+    renderBoard(entries);
+    mEl.value = ''; btn.textContent = 'POST_'; btn.disabled = false;
+    const flash = document.getElementById('mb-flash');
+    flash.classList.add('show');
+    setTimeout(() => flash.classList.remove('show'), 1800);
+  };
+
+  document.getElementById('mb-submit').addEventListener('click', postMessage);
+    document.getElementById('mb-message').addEventListener('keydown', e => { if (e.key==='Enter') postMessage(); });
+  loadEntries().then(renderBoard);
+  setInterval(() => loadEntries().then(renderBoard), 60000);
+</script>
+
+<!-- ══ THREE.JS + GLB VIEWER ══ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  const container = document.getElementById('heroViewer');
+  const canvas    = document.getElementById('glbCanvas');
+  const status    = document.getElementById('viewerStatus');
+  const dropHint  = document.getElementById('viewerDropHint');
+
+  /* ── RENDERER ── */
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setClearColor(0x000000, 1);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.001, 1000);
+  camera.position.set(0, 1.2, 3.5);
+
+  /* ── CONTROLS ── */
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping   = true;
+  controls.dampingFactor   = 0.06;
+  controls.enablePan       = false;
+  controls.autoRotate      = true;
+  controls.autoRotateSpeed = 0.6;
+  controls.minDistance     = 0.3;
+  controls.maxDistance     = 14;
+  controls.addEventListener('start', () => { controls.autoRotate = false; });
+
+  /* ── LIGHTING ── */
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+
+  const key = new THREE.DirectionalLight(0xffffff, 1.2);
+  key.position.set(3, 5, 3);
+  key.castShadow = true;
+  scene.add(key);
+
+  const fill = new THREE.DirectionalLight(0xffffff, 0.35);
+  fill.position.set(-3, 2, -2);
+  scene.add(fill);
+
+  const rim = new THREE.DirectionalLight(0xffffff, 0.4);
+  rim.position.set(0, -2, -4);
+  scene.add(rim);
+
+  /* ── FLOOR GRID ── */
+  const grid = new THREE.GridHelper(12, 24, 0x2a2a2a, 0x1a1a1a);
+  scene.add(grid);
+
+  /* ── RESIZE ── */
+  function resize() {
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(container);
+  resize();
+
+  /* ── RENDER LOOP ── */
+  (function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  })();
+
+  /* ── LOAD GLB ── */
+  let currentModel = null;
+
+  function fitCamera(model) {
+    const box    = new THREE.Box3().setFromObject(model);
+    const size   = box.getSize(new THREE.Vector3());
+    const centre = box.getCenter(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale  = 2.2 / maxDim;
+
+    model.scale.setScalar(scale);
+    model.position.sub(centre.multiplyScalar(scale));
+
+    const box2 = new THREE.Box3().setFromObject(model);
+    model.position.y -= box2.min.y;
+    grid.position.y   = box2.min.y - 0.005;
+
+    camera.position.set(0, size.y * scale * 0.7, maxDim * scale * 2.4);
+    controls.target.set(0, size.y * scale * 0.35, 0);
+    controls.update();
+  }
+
+  function loadGLB(url, fromDrop) {
+    status.textContent = 'LOADING MODEL…';
+    dropHint.classList.add('hidden');
+    controls.autoRotate = true;
+
+    if (currentModel) { scene.remove(currentModel); currentModel = null; }
+
+    new THREE.GLTFLoader().load(
+      url,
+      (gltf) => {
+        const model = gltf.scene;
+        model.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+        fitCamera(model);
+        scene.add(model);
+        currentModel = model;
+        status.textContent = fromDrop ? 'MODEL LOADED' : 'MODEL READY';
+        if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+      },
+      (xhr) => {
+        if (xhr.total) status.textContent = 'LOADING… ' + Math.round(xhr.loaded / xhr.total * 100) + '%';
+      },
+      () => {
+        status.textContent = 'PLACEHOLDER — DROP .GLB TO LOAD';
+        dropHint.classList.remove('hidden');
+        loadPlaceholder();
+      }
+    );
+  }
+
+  /* Wireframe icosahedron placeholder */
+  function loadPlaceholder() {
+    if (currentModel) { scene.remove(currentModel); currentModel = null; }
+
+    const g = new THREE.Group();
+
+    g.add(Object.assign(new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.7, 1),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true, opacity: 0.22, transparent: true })
+    )));
+
+    g.add(Object.assign(new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.64, 1),
+      new THREE.MeshStandardMaterial({ color: 0x0a0a0a })
+    )));
+
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(1.1, 0.007, 8, 80),
+      new THREE.MeshStandardMaterial({ color: 0x3a3a3a })
+    );
+    ring.rotation.x = Math.PI / 2.2;
+    g.add(ring);
+
+    let t = 0;
+    (function spin() {
+      requestAnimationFrame(spin);
+      t += 0.003;
+      g.rotation.y  = t;
+      ring.rotation.z = t * 0.35;
+    })();
+
+    scene.add(g);
+    currentModel = g;
+    camera.position.set(0, 0.7, 3.2);
+    controls.target.set(0, 0, 0);
+    controls.update();
+  }
+
+  /* Try loading ./model.glb from repo root */
+  loadGLB('./model.glb', false);
+
+  /* ── DRAG & DROP ── */
+  container.addEventListener('dragover', e => { e.preventDefault(); container.classList.add('drag-over'); });
+  container.addEventListener('dragleave', () => container.classList.remove('drag-over'));
+  container.addEventListener('drop', e => {
+    e.preventDefault();
+    container.classList.remove('drag-over');
+    const file = [...e.dataTransfer.files].find(f => /\.(glb|gltf)$/i.test(f.name));
+    if (file) loadGLB(URL.createObjectURL(file), true);
+    else status.textContent = 'UNSUPPORTED FILE — USE .GLB OR .GLTF';
+  });
+
+})();
+</script>
 </body>
 </html>
