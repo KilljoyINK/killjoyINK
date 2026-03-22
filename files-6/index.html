@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INK LABS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">INK LABS <span>ENG·RESEARCH·DIVISION</span></a>
+  <ul class="nav-links">
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="film.html">Film</a></li>
+    <li><a href="experimental.html">Experimental</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-status">SYSTEMS ONLINE</div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-viewer" id="heroViewer">
+    <canvas id="glbCanvas"></canvas>
+    <div class="viewer-grid-overlay"></div>
+    <div class="viewer-hud">
+      <span class="viewer-hud-item" id="viewerStatus">INITIALISING…</span>
+      <span class="viewer-hud-sep">·</span>
+      <span class="viewer-hud-item">DRAG TO ROTATE</span>
+      <span class="viewer-hud-sep">·</span>
+      <span class="viewer-hud-item">SCROLL TO ZOOM</span>
+    </div>
+    <div class="viewer-drop-hint hidden" id="viewerDropHint">
+      DROP .GLB FILE HERE<br>
+      <span>or place <code>model.glb</code> in repo root</span>
+    </div>
+  </div>
+
+  <div class="hero-panel">
+    <div class="hero-top-label">INK LABS / EST. 2018</div>
+    <div class="hero-coords" id="heroCoords">
+      LAT 33.7490° N<br>LON 84.3880° W<br>ALT 320 M<br><br>SYS.STATUS:OK<br>CUR.X:0.0000<br>CUR.Y:0.0000
+    </div>
+    <div class="hero-scroll-hint">SCROLL</div>
+    <div class="hero-main">
+      <h1 class="hero-title">INK<br>LABS</h1>
+      <div class="hero-sub">
+        <p>A research division pushing the boundary between prototype and production.
+        We build systems that work under pressure — from embedded firmware
+        to autonomous control architectures.</p>
+        <div class="hero-tags">
+          <span class="tag">Robotics</span>
+          <span class="tag">Embedded Systems</span>
+          <span class="tag">Computer Vision</span>
+          <span class="tag">Structural Analysis</span>
+          <span class="tag">Control Systems</span>
+          <span class="tag">AI Integration</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span class="ticker-item">Autonomous Systems <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Embedded Firmware <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Computer Vision <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Structural Analysis <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Real-Time Control <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Human-Machine Interfaces <span class="ticker-dot"></span></span>
+    <span class="ticker-item">MEMS &amp; Sensors <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Edge Computing <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Autonomous Systems <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Embedded Firmware <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Computer Vision <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Structural Analysis <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Real-Time Control <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Human-Machine Interfaces <span class="ticker-dot"></span></span>
+    <span class="ticker-item">MEMS &amp; Sensors <span class="ticker-dot"></span></span>
+    <span class="ticker-item">Edge Computing <span class="ticker-dot"></span></span>
+  </div>
+</div>
+
+<!-- VISITOR LOG -->
+<section id="visitor-log">
+  <div class="vlog-bar">
+    <div class="vlog-bar-label">LEAVE A MSG</div>
+    <div class="vlog-bar-field vlog-bar-field--handle">
+      <label for="vlog-user">// Handle</label>
+      <input id="vlog-user" type="text" maxlength="20" placeholder="anonymous" autocomplete="off" spellcheck="false" />
+    </div>
+    <div class="vlog-bar-field vlog-bar-field--msg">
+      <label for="vlog-msg">// Message</label>
+      <input id="vlog-msg" type="text" maxlength="80" placeholder="was here…" autocomplete="off" spellcheck="false" />
+    </div>
+    <button class="vlog-bar-btn" id="vlog-btn">POST →</button>
+    <div class="vlog-feed-row">
+      <div class="vlog-feed-tag"><span class="vlog-live-dot"></span>LIVE</div>
+      <div class="vlog-feed-scroll" id="vlog-entries">
+        <div class="vlog-feed-empty">NO ENTRIES YET</div>
+      </div>
+      <div class="vlog-count-tag" id="vlog-count">0 VISITORS</div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITORIAL LEAD -->
+<div class="editorial-lead reveal">
+  <img src="https://picsum.photos/seed/inkfeat01/1600/900" alt="Aerial swarm field deployment" />
+  <div class="editorial-lead-caption">
+    <div class="editorial-lead-title">AERIAL<br>SWARM<br>SYSTEM</div>
+    <div class="editorial-lead-meta">
+      FEATURED PROJECT<br>2024 — ACTIVE<br>
+      <a href="projects.html">VIEW PROJECT →</a>
+    </div>
+  </div>
+</div>
+
+<!-- STRIP 1 -->
+<div class="wt-strip reveal">
+  <div class="wt-media">
+    <img src="https://picsum.photos/seed/inkwt01/900/600" alt="Lab interior" />
+  </div>
+  <div class="wt-caption">
+    <div>
+      <div class="wt-label">LAB OVERVIEW / SITE WALK-THROUGH</div>
+      <div class="wt-heading">Where hardware meets intelligent control</div>
+      <p class="wt-body">Our 4,200 sq ft facility houses precision machining, PCB fabrication,
+      a motion-capture volume, and a full software stack — closing the design loop
+      from CAD to deployment without leaving the building.</p>
+    </div>
+    <div class="wt-footnote">ALPHARETTA, GA · ROOM 4.112<br>EST. 2018 · 12 RESEARCHERS</div>
+  </div>
+</div>
+
+<!-- METRICS -->
+<div class="metrics-row">
+  <div class="metric-cell reveal"><div class="val">47</div><div class="lbl">Publications</div></div>
+  <div class="metric-cell reveal"><div class="val">$4.2M</div><div class="lbl">Funding Awarded</div></div>
+  <div class="metric-cell reveal"><div class="val">23</div><div class="lbl">Industry Partners</div></div>
+  <div class="metric-cell reveal"><div class="val">6</div><div class="lbl">Patents Filed</div></div>
+</div>
+
+<!-- RECENT WORK -->
+<div class="section-header reveal">
+  <span class="section-num">—</span>
+  <span class="section-line"></span>
+  <span class="section-label">Recent Work</span>
+  <a href="projects.html" style="font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.3);text-decoration:none;white-space:nowrap;margin-left:16px;">VIEW ALL →</a>
+</div>
+
+<div class="projects-grid">
+  <div class="proj-card proj-card--wide reveal">
+    <div class="proj-thumb">
+      <img src="https://picsum.photos/seed/robot1/900/506" alt="Autonomous Ground Vehicle" loading="lazy" />
+    </div>
+    <div class="proj-meta">
+      <div class="proj-index">PROJ — 001 / 2024</div>
+      <h3 class="proj-title">Autonomous Ground Vehicle Platform</h3>
+      <p class="proj-desc">Full-stack autonomous navigation system integrating LiDAR, stereo vision, and real-time path planning.</p>
+      <div class="proj-tags">
+        <span class="proj-tag">ROS2</span><span class="proj-tag">SLAM</span><span class="proj-tag">C++</span>
+      </div>
+    </div>
+    <span class="proj-arrow">↗</span>
+  </div>
+  <div class="proj-card proj-card--med reveal">
+    <div class="proj-thumb">
+      <img src="https://picsum.photos/seed/soft2/700/525" alt="Soft Actuator" loading="lazy" />
+    </div>
+    <div class="proj-meta">
+      <div class="proj-index">PROJ — 002 / 2024</div>
+      <h3 class="proj-title">Soft Actuator Control System</h3>
+      <p class="proj-desc">Pneumatic soft-robot actuator array with closed-loop pressure control.</p>
+      <div class="proj-tags">
+        <span class="proj-tag">Soft Robotics</span><span class="proj-tag">FEA</span>
+      </div>
+    </div>
+    <span class="proj-arrow">↗</span>
+  </div>
+</div>
+
+<!-- COLOPHON -->
+<div class="colophon reveal">
+  <div class="colophon-left">
+    <div class="colophon-title">INK<br>LABS<br>2024</div>
+  </div>
+  <dl class="colophon-details">
+    <div class="colophon-detail"><dt>Year</dt><dd>2018 — Present</dd></div>
+    <div class="colophon-detail"><dt>Location</dt><dd>Alpharetta, Georgia</dd></div>
+    <div class="colophon-detail"><dt>Affiliations</dt><dd>IEEE · ACM · AIAA · NSF · DARPA</dd></div>
+    <div class="colophon-detail"><dt>Director</dt><dd>Dr. Sara Chen</dd></div>
+    <div class="colophon-detail"><dt>P.I.</dt><dd>Prof. Marcus Webb</dd></div>
+    <div class="colophon-detail"><dt>Contact</dt><dd><a href="mailto:lab@inklabs.edu">lab@inklabs.edu</a></dd></div>
+  </dl>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-logo">INK LABS</div>
+  <div class="footer-copy">© 2024 INK LABS ENGINEERING. ALL RIGHTS RESERVED.</div>
+  <ul class="footer-links">
+    <li><a href="#">GitHub</a></li>
+    <li><a href="#">Scholar</a></li>
+    <li><a href="#">LinkedIn</a></li>
+  </ul>
+</footer>
+
+<div class="vlog-flash" id="vlog-flash">POSTED_</div>
+
+<script>
+/* Scroll reveal */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const siblings = [...(e.target.parentElement?.querySelectorAll('.reveal:not(.visible)') || [])];
+    e.target.style.transitionDelay = Math.min(siblings.indexOf(e.target) * 70, 280) + 'ms';
+    e.target.classList.add('visible');
+    io.unobserve(e.target);
+  });
+}, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* Cursor coords */
+document.addEventListener('mousemove', e => {
+  const el = document.getElementById('heroCoords');
+  if (!el) return;
+  const x = ((e.clientX / window.innerWidth)  * 2 - 1).toFixed(4);
+  const y = ((e.clientY / window.innerHeight) * 2 - 1).toFixed(4);
+  el.innerHTML = `LAT 33.7490° N<br>LON 84.3880° W<br>ALT 320 M<br><br>SYS.STATUS:OK<br>CUR.X:${x}<br>CUR.Y:${y}`;
+});
+
+/* Visitor log */
+(function () {
+  const KEY = 'inklabs-visitor-log-v2', MAX = 222;
+  const ago = ts => { const d=Date.now()-ts, m=Math.floor(d/60000), h=Math.floor(d/3600000), dy=Math.floor(d/86400000); return m<1?'NOW':m<60?m+'m':h<24?h+'h':dy+'d'; };
+  const esc = s => s.replace(/</g,'&lt;').replace(/>/g,'&gt;').trim();
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)||'[]'); } catch { return []; } };
+  const save = e => { try { localStorage.setItem(KEY, JSON.stringify(e)); } catch {} };
+
+  const render = entries => {
+    const countEl = document.getElementById('vlog-count');
+    const feedEl  = document.getElementById('vlog-entries');
+    if (!feedEl) return;
+    if (countEl) countEl.textContent = entries.length + (entries.length !== 1 ? ' VISITORS' : ' VISITOR');
+    if (!entries.length) { feedEl.innerHTML = '<div class="vlog-feed-empty">BE THE FIRST_</div>'; return; }
+    feedEl.innerHTML = [...entries].reverse().slice(0,5).map(e =>
+      `<div class="vlog-feed-item"><span class="vlog-feed-item-user">${esc(e.user)}</span><span class="vlog-feed-item-msg">${esc(e.msg)}</span><span class="vlog-feed-item-time">${ago(e.ts)}</span></div>`
+    ).join('');
+  };
+
+  const post = () => {
+    const uEl = document.getElementById('vlog-user');
+    const mEl = document.getElementById('vlog-msg');
+    if (!mEl) return;
+    const user = (uEl?.value.trim() || 'anonymous').slice(0,20);
+    const msg  = mEl.value.trim().slice(0,80);
+    if (!msg) { mEl.focus(); mEl.style.outline='1px solid rgba(255,255,255,0.35)'; return; }
+    mEl.style.outline = '';
+    const entries = load();
+    entries.push({ user, msg, ts: Date.now() });
+    if (entries.length > MAX) entries.splice(0, entries.length - MAX);
+    save(entries); render(entries);
+    mEl.value = ''; if (uEl) uEl.value = '';
+    const flash = document.getElementById('vlog-flash');
+    if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1600); }
+  };
+
+  document.getElementById('vlog-btn')?.addEventListener('click', post);
+  document.getElementById('vlog-msg')?.addEventListener('keydown', e => { if (e.key==='Enter') post(); });
+  render(load());
+  setInterval(() => render(load()), 60000);
+})();
+</script>
+
+<!-- GLB viewer -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  const con = document.getElementById('heroViewer');
+  const cvs = document.getElementById('glbCanvas');
+  const sta = document.getElementById('viewerStatus');
+  const dh  = document.getElementById('viewerDropHint');
+
+  const R = new THREE.WebGLRenderer({ canvas: cvs, antialias: true });
+  R.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  R.outputEncoding = THREE.sRGBEncoding;
+  R.shadowMap.enabled = true;
+  R.setClearColor(0x000000, 1);
+
+  const scene = new THREE.Scene();
+  const cam   = new THREE.PerspectiveCamera(45, 1, 0.001, 1000);
+  cam.position.set(0, 1.2, 3.5);
+
+  const ctrl = new THREE.OrbitControls(cam, cvs);
+  ctrl.enableDamping = true; ctrl.dampingFactor = 0.06;
+  ctrl.enablePan = false; ctrl.autoRotate = true; ctrl.autoRotateSpeed = 0.6;
+  ctrl.minDistance = 0.3; ctrl.maxDistance = 14;
+  ctrl.addEventListener('start', () => { ctrl.autoRotate = false; });
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+  const key = new THREE.DirectionalLight(0xffffff, 1.2); key.position.set(3,5,3); key.castShadow = true; scene.add(key);
+  scene.add(Object.assign(new THREE.DirectionalLight(0xffffff, 0.35), { position: new THREE.Vector3(-3,2,-2) }));
+  scene.add(Object.assign(new THREE.DirectionalLight(0xffffff, 0.4),  { position: new THREE.Vector3(0,-2,-4) }));
+
+  const grid = new THREE.GridHelper(12, 24, 0x2a2a2a, 0x1a1a1a);
+  scene.add(grid);
+
+  const resize = () => { const w=con.clientWidth, h=con.clientHeight; R.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix(); };
+  new ResizeObserver(resize).observe(con); resize();
+  (function loop() { requestAnimationFrame(loop); ctrl.update(); R.render(scene, cam); })();
+
+  let cur = null;
+
+  function loadGLB(url) {
+    sta.textContent = 'LOADING…'; dh.classList.add('hidden'); ctrl.autoRotate = true;
+    if (cur) { scene.remove(cur); cur = null; }
+    new THREE.GLTFLoader().load(url,
+      gltf => {
+        const m = gltf.scene;
+        const box = new THREE.Box3().setFromObject(m);
+        const sz  = box.getSize(new THREE.Vector3());
+        const cen = box.getCenter(new THREE.Vector3());
+        const mx  = Math.max(sz.x, sz.y, sz.z);
+        const sc  = 2.2 / mx;
+        m.scale.setScalar(sc);
+        m.position.sub(cen.multiplyScalar(sc));
+        const b2 = new THREE.Box3().setFromObject(m);
+        m.position.y -= b2.min.y; grid.position.y = b2.min.y - 0.005;
+        cam.position.set(0, sz.y*sc*0.7, mx*sc*2.4);
+        ctrl.target.set(0, sz.y*sc*0.35, 0); ctrl.update();
+        m.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+        scene.add(m); cur = m;
+        sta.textContent = 'MODEL READY';
+        if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+      },
+      xhr => { if (xhr.total) sta.textContent = 'LOADING ' + Math.round(xhr.loaded/xhr.total*100) + '%'; },
+      () => { sta.textContent = 'DROP .GLB TO LOAD'; dh.classList.remove('hidden'); placeholder(); }
+    );
+  }
+
+  function placeholder() {
+    if (cur) { scene.remove(cur); cur = null; }
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.7,1), new THREE.MeshStandardMaterial({ color:0xffffff, wireframe:true, opacity:0.22, transparent:true })));
+    g.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.64,1), new THREE.MeshStandardMaterial({ color:0x0a0a0a })));
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.1,0.007,8,80), new THREE.MeshStandardMaterial({ color:0x3a3a3a }));
+    ring.rotation.x = Math.PI / 2.2; g.add(ring);
+    let t = 0; (function s() { requestAnimationFrame(s); t+=0.003; g.rotation.y=t; ring.rotation.z=t*0.35; })();
+    scene.add(g); cur = g;
+    cam.position.set(0, 0.7, 3.2); ctrl.target.set(0,0,0); ctrl.update();
+  }
+
+  loadGLB('./model.glb');
+
+  con.addEventListener('dragover', e => { e.preventDefault(); con.classList.add('drag-over'); });
+  con.addEventListener('dragleave', () => con.classList.remove('drag-over'));
+  con.addEventListener('drop', e => {
+    e.preventDefault(); con.classList.remove('drag-over');
+    const f = [...e.dataTransfer.files].find(f => /\.(glb|gltf)$/i.test(f.name));
+    if (f) loadGLB(URL.createObjectURL(f));
+    else sta.textContent = 'USE .GLB OR .GLTF';
+  });
+})();
+</script>
+</body>
+</html>
