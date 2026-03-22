@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ═══════════════════════════════════════════
+       ★ CUSTOMISE: Change the title & description
+       ═══════════════════════════════════════════ -->
+  <title>YOUR NAME — Studio</title>
+  <meta name="description" content="A creative studio based in your city." />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Typefaces -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Archivo:wght@300;400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ─────────────────────────────────────
+       LOADING SCREEN
+       ───────────────────────────────────── -->
+  <div id="loader">
+    <div class="loader-inner">
+      <!-- ★ CUSTOMISE: Your studio name -->
+      <span class="loader-name">YOUR NAME</span>
+      <div class="loader-bar-track">
+        <div class="loader-bar"></div>
+      </div>
+      <span class="loader-pct">0%</span>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────
+       CURSOR DOT
+       ───────────────────────────────────── -->
+  <div class="cursor"></div>
+
+
+  <!-- ─────────────────────────────────────
+       HEADER / NAV
+       ───────────────────────────────────── -->
+  <header id="header">
+    <div class="header-left">
+      <!-- ★ CUSTOMISE: Your studio name -->
+      <a href="#" class="wordmark">YOUR NAME</a>
+    </div>
+    <nav class="header-right">
+      <a href="#work"   class="nav-link">Work</a>
+      <a href="#about"  class="nav-link">About</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+
+  <!-- ─────────────────────────────────────
+       HERO — FULL-SCREEN INTRO
+       ───────────────────────────────────── -->
+  <section id="hero">
+    <!--
+      ★ CUSTOMISE: Replace "images/hero.jpg" with your own image.
+        Recommended size: 2560 × 1440 px, landscape.
+        You can also use a video: swap <img> for <video autoplay muted loop playsinline>
+    -->
+    <div class="hero-media">
+      <img src="images/hero.jpg" alt="Hero image" class="hero-img" />
+    </div>
+
+    <div class="hero-copy">
+      <!-- ★ CUSTOMISE: Your tagline -->
+      <p class="hero-tagline">
+        An art direction studio,<br />
+        based in <em>your city</em>.
+      </p>
+    </div>
+
+    <div class="hero-scroll-hint">↓</div>
+  </section>
+
+
+  <!-- ─────────────────────────────────────
+       WORK GRID
+       ───────────────────────────────────── -->
+  <section id="work">
+    <div class="section-label">Selected Work</div>
+
+    <div class="grid">
+
+      <!--
+        ═══════════════════════════════════════════════════
+        ★ HOW TO ADD / EDIT PROJECTS
+          1. Copy one <article class="project"> block.
+          2. Replace the <img src="..."> with your image path.
+          3. Edit the project title, tags, and year.
+          4. Optionally link the title to a case-study page.
+          Recommended image sizes:
+            Large  (data-size="large")  → 1600 × 1000 px
+            Medium (data-size="medium") → 900 × 700 px
+            Small  (data-size="small")  → 700 × 700 px
+        ═══════════════════════════════════════════════════
+      -->
+
+      <!-- Project 1 — large tile -->
+      <article class="project" data-size="large">
+        <div class="project-media">
+          <img src="images/project-01.jpg" alt="Project One" loading="lazy" />
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-index">01</span>
+          <div class="project-info">
+            <!-- ★ CUSTOMISE -->
+            <h2 class="project-title">Project Title One</h2>
+            <span class="project-tags">Brand Identity — 2024</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 2 — medium tile -->
+      <article class="project" data-size="medium">
+        <div class="project-media">
+          <img src="images/project-02.jpg" alt="Project Two" loading="lazy" />
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-index">02</span>
+          <div class="project-info">
+            <h2 class="project-title">Project Title Two</h2>
+            <span class="project-tags">Campaign — 2024</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 3 — medium tile -->
+      <article class="project" data-size="medium">
+        <div class="project-media">
+          <img src="images/project-03.jpg" alt="Project Three" loading="lazy" />
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-index">03</span>
+          <div class="project-info">
+            <h2 class="project-title">Project Title Three</h2>
+            <span class="project-tags">Editorial — 2023</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 4 — small tile -->
+      <article class="project" data-size="small">
+        <div class="project-media">
+          <img src="images/project-04.jpg" alt="Project Four" loading="lazy" />
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-index">04</span>
+          <div class="project-info">
+            <h2 class="project-title">Project Title Four</h2>
+            <span class="project-tags">Print — 2023</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 5 — small tile -->
+      <article class="project" data-size="small">
+        <div class="project-media">
+          <img src="images/project-05.jpg" alt="Project Five" loading="lazy" />
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-index">05</span>
+          <div class="project-info">
+            <h2 class="project-title">Project Title Five</h2>
+            <span class="project-tags">Digital — 2023</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 6 — large tile -->
+      <article class="project" data-size="large">
+        <div class="project-media">
+          <img src="images/project-06.jpg" alt="Project Six" loading="lazy" />
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-index">06</span>
+          <div class="project-info">
+            <h2 class="project-title">Project Title Six</h2>
+            <span class="project-tags">Art Direction — 2022</span>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /grid -->
+  </section>
+
+
+  <!-- ─────────────────────────────────────
+       ABOUT
+       ───────────────────────────────────── -->
+  <section id="about">
+    <div class="about-inner">
+      <div class="about-image-col">
+        <!--
+          ★ CUSTOMISE: Replace with a portrait or studio photo.
+          Recommended: 800 × 1000 px, portrait.
+        -->
+        <img src="images/about.jpg" alt="About photo" class="about-img" />
+      </div>
+
+      <div class="about-text-col">
+        <div class="section-label">About</div>
+
+        <!-- ★ CUSTOMISE: Your bio paragraphs -->
+        <p class="about-body">
+          YOUR NAME is an independent art direction studio founded in
+          [year] by [your name]. The studio works at the intersection
+          of visual identity, editorial, and campaign — collaborating
+          with brands and cultural institutions to produce work that
+          is precise, considered, and enduring.
+        </p>
+        <p class="about-body">
+          Clients have included [Client A], [Client B], and [Client C].
+          Based in [your city]; available worldwide.
+        </p>
+
+        <!-- ★ CUSTOMISE: Add, remove, or rename services -->
+        <ul class="services-list">
+          <li>Art Direction</li>
+          <li>Brand Identity</li>
+          <li>Editorial Design</li>
+          <li>Campaign</li>
+          <li>Print</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ─────────────────────────────────────
+       CONTACT
+       ───────────────────────────────────── -->
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="section-label">Contact</div>
+
+      <a href="mailto:hello@yourstudio.com" class="contact-email">
+        <!-- ★ CUSTOMISE: your email address -->
+        hello@yourstudio.com
+      </a>
+
+      <div class="contact-links">
+        <!-- ★ CUSTOMISE: your social/external links — delete any you don't use -->
+        <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="files/press-kit.pdf" target="_blank">Press Kit ↗</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ─────────────────────────────────────
+       FOOTER
+       ───────────────────────────────────── -->
+  <footer id="footer">
+    <span class="footer-left">
+      <!-- ★ CUSTOMISE: your name & version -->
+      © <span id="year"></span> YOUR NAME. V1.0
+    </span>
+    <span class="footer-right">All Rights Reserved.</span>
+  </footer>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
