@@ -524,250 +524,216 @@
     .colophon-detail dd a:hover { color: var(--white); border-color: var(--white); }
 
 
-    /* ══ VISITOR LOG — prominent front-of-page ══ */
+    /* ══ VISITOR LOG — horizontal bar ══ */
     #visitor-log {
       border-bottom: 1px solid var(--gray-mid);
     }
 
-    .vlog-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    /* LEFT: input panel */
-    .vlog-input-panel {
-      padding: 48px 44px;
-      border-right: 1px solid var(--gray-mid);
+    /* Single horizontal row: label | handle | message | btn | feed */
+    .vlog-bar {
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 32px;
-    }
-
-    .vlog-eyebrow {
-      font-size: 9px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.25);
-      margin-bottom: 12px;
-    }
-
-    .vlog-prompt {
-      font-family: var(--display);
-      font-size: clamp(36px, 4vw, 60px);
-      line-height: 0.95;
-      letter-spacing: 0.04em;
-    }
-
-    .vlog-sub {
-      font-size: 12px;
-      color: rgba(255,255,255,0.35);
-      line-height: 1.8;
-      margin-top: 12px;
-      max-width: 320px;
-    }
-
-    .vlog-fields {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      border: 1px solid var(--gray-mid);
-    }
-
-    .vlog-field {
-      display: flex;
-      flex-direction: column;
+      align-items: stretch;
+      min-height: 52px;
       border-bottom: 1px solid var(--gray-mid);
     }
 
-    .vlog-field:last-of-type { border-bottom: none; }
-
-    .vlog-field-label {
-      font-size: 8px;
-      letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.2);
-      padding: 10px 16px 4px;
-      text-transform: uppercase;
+    .vlog-bar-label {
+      display: flex;
+      align-items: center;
+      padding: 0 22px;
+      border-right: 1px solid var(--gray-mid);
+      font-family: var(--display);
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      color: rgba(255,255,255,0.9);
+      flex-shrink: 0;
     }
 
-    .vlog-field input {
+    .vlog-bar-field {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid var(--gray-mid);
+      flex-shrink: 0;
+    }
+
+    .vlog-bar-field--handle { min-width: 160px; }
+    .vlog-bar-field--msg    { flex: 1; }
+
+    .vlog-bar-field label {
+      font-size: 7px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+      padding: 8px 16px 2px;
+    }
+
+    .vlog-bar-field input {
       background: none;
       border: none;
       outline: none;
       font-family: var(--mono);
-      font-size: 14px;
+      font-size: 12px;
       color: var(--white);
-      padding: 4px 16px 12px;
-      caret-color: rgba(255,255,255,0.8);
+      padding: 2px 16px 8px;
+      caret-color: rgba(255,255,255,0.7);
+      width: 100%;
     }
 
-    .vlog-field input::placeholder { color: rgba(255,255,255,0.13); }
+    .vlog-bar-field input::placeholder { color: rgba(255,255,255,0.13); }
+    .vlog-bar-field input:focus { background: rgba(255,255,255,0.02); }
 
-    .vlog-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 16px;
-    }
-
-    .vlog-count {
-      font-size: 9px;
-      color: rgba(255,255,255,0.18);
-      letter-spacing: 0.15em;
-    }
-
-    .vlog-btn {
-      background: var(--white);
-      color: var(--black);
+    .vlog-bar-btn {
+      background: none;
       border: none;
+      border-right: 1px solid var(--gray-mid);
       font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      padding: 12px 32px;
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-
-    .vlog-btn:hover { opacity: 0.82; }
-    .vlog-btn:disabled { opacity: 0.35; cursor: default; }
-
-    /* RIGHT: last 5 entries feed */
-    .vlog-feed-panel {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .vlog-feed-header {
-      padding: 14px 24px;
-      border-bottom: 1px solid var(--gray-mid);
       font-size: 9px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.45);
+      padding: 0 22px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .vlog-bar-btn:hover  { color: var(--white); background: rgba(255,255,255,0.04); }
+    .vlog-bar-btn:active { background: rgba(255,255,255,0.08); }
+    .vlog-bar-btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* Live feed — scrolling list of last 5, inline */
+    .vlog-feed-row {
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .vlog-feed-tag {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      padding: 0 16px;
+      border-right: 1px solid var(--gray-mid);
+      font-size: 7px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.15);
+      white-space: nowrap;
+      flex-shrink: 0;
+      gap: 7px;
     }
 
     .vlog-live-dot {
       width: 5px; height: 5px;
       border-radius: 50%;
       background: var(--white);
-      opacity: 0.4;
+      opacity: 0.35;
       animation: blink 1.8s step-end infinite;
-      display: inline-block;
-      margin-right: 6px;
+      flex-shrink: 0;
     }
 
-    .vlog-entries {
-      flex: 1;
+    .vlog-feed-scroll {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+      flex: 1;
     }
 
-    .vlog-entry {
-      display: grid;
-      grid-template-columns: 36px 1fr auto;
-      align-items: start;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--gray-mid);
-      gap: 0 16px;
-      animation: vlog-slide-in 0.35s cubic-bezier(0.16,1,0.3,1);
-      transition: background 0.2s;
+    .vlog-feed-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px;
+      border-right: 1px solid var(--gray-mid);
+      white-space: nowrap;
+      animation: vlog-fadein 0.3s ease;
+      min-width: 0;
+      flex: 1;
     }
 
-    .vlog-entry:last-child { border-bottom: none; }
-    .vlog-entry:hover { background: rgba(255,255,255,0.02); }
+    .vlog-feed-item:last-child { border-right: none; }
 
-    @keyframes vlog-slide-in {
-      from { opacity: 0; transform: translateY(-8px); }
+    @keyframes vlog-fadein {
+      from { opacity: 0; transform: translateY(-4px); }
       to   { opacity: 1; transform: none; }
     }
 
-    .vlog-entry-idx {
-      font-size: 9px;
-      color: rgba(255,255,255,0.12);
-      letter-spacing: 0.1em;
-      padding-top: 3px;
-    }
-
-    .vlog-entry-body { min-width: 0; }
-
-    .vlog-entry-user {
+    .vlog-feed-item-user {
       font-weight: 700;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
     }
 
-    .vlog-entry-user::before {
-      content: '>';
-      font-size: 9px;
-      color: rgba(255,255,255,0.25);
+    .vlog-feed-item-msg {
+      font-size: 10px;
+      color: rgba(255,255,255,0.38);
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .vlog-entry-user.is-new::after {
-      content: 'JUST NOW';
-      font-size: 7px;
-      letter-spacing: 0.15em;
-      color: rgba(255,255,255,0.35);
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 1px 5px;
-      font-weight: 400;
-    }
-
-    .vlog-entry-msg {
-      font-size: 12px;
-      color: rgba(255,255,255,0.45);
-      line-height: 1.5;
-      word-break: break-word;
-    }
-
-    .vlog-entry-time {
+    .vlog-feed-item-time {
       font-size: 8px;
       color: rgba(255,255,255,0.15);
-      letter-spacing: 0.1em;
-      white-space: nowrap;
-      padding-top: 3px;
+      letter-spacing: 0.08em;
+      flex-shrink: 0;
+      margin-left: auto;
     }
 
-    /* Empty state */
-    .vlog-empty {
-      flex: 1;
+    .vlog-feed-empty {
       display: flex;
       align-items: center;
-      justify-content: center;
+      padding: 0 24px;
       font-size: 9px;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.2em;
       color: rgba(255,255,255,0.1);
-      padding: 48px 24px;
     }
 
-    /* Flash */
+    .vlog-count-tag {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-left: 1px solid var(--gray-mid);
+      font-size: 8px;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.15);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Flash toast */
     .vlog-flash {
       position: fixed;
-      bottom: 28px; left: 50%;
-      transform: translateX(-50%) translateY(8px);
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(6px);
       background: var(--white);
       color: var(--black);
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 9px;
       letter-spacing: 0.22em;
-      padding: 11px 28px;
+      padding: 10px 24px;
       z-index: 300;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: opacity 0.15s, transform 0.15s;
     }
 
-    .vlog-flash.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
+    .vlog-flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 900px) {
+      .vlog-feed-row { display: none; }
+      .vlog-bar-field--handle { min-width: 120px; }
+    }
+
+    @media (max-width: 600px) {
+      .vlog-bar { flex-wrap: wrap; }
+      .vlog-bar-label { border-bottom: 1px solid var(--gray-mid); width: 100%; }
+      .vlog-bar-field--handle { flex: 1; }
     }
 
     @media (max-width: 860px) {
@@ -907,44 +873,33 @@
 
 <!-- ══ VISITOR LOG ══ -->
 <section id="visitor-log">
-  <div class="vlog-wrapper">
+  <div class="vlog-bar">
 
-    <!-- INPUT SIDE -->
-    <div class="vlog-input-panel">
-      <div>
-        <div class="vlog-eyebrow">// VISITOR LOG</div>
-        <div class="vlog-prompt">SIGN<br>THE<br>WALL.</div>
-        <p class="vlog-sub">Leave a note. Everyone who visits sees it.<br>
-        The last 5 entries are shown live.</p>
-      </div>
+    <!-- Label -->
+    <div class="vlog-bar-label">LEAVE A MSG</div>
 
-      <div>
-        <div class="vlog-fields">
-          <div class="vlog-field">
-            <label class="vlog-field-label">// Handle</label>
-            <input id="vlog-user" type="text" maxlength="20" placeholder="anonymous" autocomplete="off" spellcheck="false" />
-          </div>
-          <div class="vlog-field">
-            <label class="vlog-field-label">// Message</label>
-            <input id="vlog-msg" type="text" maxlength="80" placeholder="was here…" autocomplete="off" spellcheck="false" />
-          </div>
-        </div>
-        <div class="vlog-actions">
-          <span class="vlog-count" id="vlog-count">— VISITORS</span>
-          <button class="vlog-btn" id="vlog-btn">POST →</button>
-        </div>
-      </div>
+    <!-- Handle field -->
+    <div class="vlog-bar-field vlog-bar-field--handle">
+      <label for="vlog-user">// Handle</label>
+      <input id="vlog-user" type="text" maxlength="20" placeholder="anonymous" autocomplete="off" spellcheck="false" />
     </div>
 
-    <!-- FEED SIDE -->
-    <div class="vlog-feed-panel">
-      <div class="vlog-feed-header">
-        <span><span class="vlog-live-dot"></span>LIVE FEED</span>
-        <span>LAST 5 ENTRIES</span>
+    <!-- Message field -->
+    <div class="vlog-bar-field vlog-bar-field--msg">
+      <label for="vlog-msg">// Message</label>
+      <input id="vlog-msg" type="text" maxlength="80" placeholder="was here…" autocomplete="off" spellcheck="false" />
+    </div>
+
+    <!-- Post button -->
+    <button class="vlog-bar-btn" id="vlog-btn">POST →</button>
+
+    <!-- Live feed: last 5 -->
+    <div class="vlog-feed-row">
+      <div class="vlog-feed-tag"><span class="vlog-live-dot"></span>LIVE</div>
+      <div class="vlog-feed-scroll" id="vlog-entries">
+        <div class="vlog-feed-empty">NO ENTRIES YET</div>
       </div>
-      <div class="vlog-entries" id="vlog-entries">
-        <div class="vlog-empty">LOADING LOG…</div>
-      </div>
+      <div class="vlog-count-tag" id="vlog-count">0 VISITORS</div>
     </div>
 
   </div>
@@ -1085,71 +1040,79 @@
   });
   /* ── VISITOR LOG ── */
   (function () {
-    const KEY = 'inklabs-visitor-log';
+    const KEY = 'inklabs-visitor-log-v2';
     const MAX = 222;
 
     const ago = ts => {
       const d = Date.now() - ts, m = Math.floor(d/60000), h = Math.floor(d/3600000), dy = Math.floor(d/86400000);
-      return m < 1 ? 'JUST NOW' : m < 60 ? m+'M AGO' : h < 24 ? h+'H AGO' : dy+'D AGO';
+      return m < 1 ? 'NOW' : m < 60 ? m+'m' : h < 24 ? h+'h' : dy+'d';
     };
 
     const esc = s => s.replace(/</g,'&lt;').replace(/>/g,'&gt;').trim();
 
-    const load = async () => {
-      try { const r = await window.storage.get(KEY, true); return r ? JSON.parse(r.value) : []; }
+    /* Use localStorage — works in every browser + GitHub Pages */
+    const load = () => {
+      try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
       catch { return []; }
     };
 
-    const save = async entries => window.storage.set(KEY, JSON.stringify(entries), true);
+    const save = entries => {
+      try { localStorage.setItem(KEY, JSON.stringify(entries)); } catch {}
+    };
 
     const render = entries => {
-      const countEl   = document.getElementById('vlog-count');
-      const feedEl    = document.getElementById('vlog-entries');
-      if (!countEl || !feedEl) return;
+      const countEl = document.getElementById('vlog-count');
+      const feedEl  = document.getElementById('vlog-entries');
+      if (!feedEl) return;
 
-      countEl.textContent = entries.length + (entries.length !== 1 ? ' VISITORS' : ' VISITOR');
+      if (countEl) countEl.textContent = entries.length + (entries.length !== 1 ? ' VISITORS' : ' VISITOR');
 
       if (!entries.length) {
-        feedEl.innerHTML = '<div class="vlog-empty">NO ENTRIES YET — BE THE FIRST_</div>';
+        feedEl.innerHTML = '<div class="vlog-feed-empty">BE THE FIRST TO LEAVE A MESSAGE_</div>';
         return;
       }
 
       const last5 = [...entries].reverse().slice(0, 5);
-      feedEl.innerHTML = last5.map((e, i) => `
-        <div class="vlog-entry">
-          <div class="vlog-entry-idx">${String(entries.length - i).padStart(3,'0')}</div>
-          <div class="vlog-entry-body">
-            <div class="vlog-entry-user${i === 0 ? ' is-new' : ''}">${esc(e.user)}</div>
-            <div class="vlog-entry-msg">${esc(e.msg)}</div>
-          </div>
-          <div class="vlog-entry-time">${ago(e.ts)}</div>
+      feedEl.innerHTML = last5.map(e => `
+        <div class="vlog-feed-item">
+          <span class="vlog-feed-item-user">${esc(e.user)}</span>
+          <span class="vlog-feed-item-msg">${esc(e.msg)}</span>
+          <span class="vlog-feed-item-time">${ago(e.ts)}</span>
         </div>`).join('');
     };
 
-    const post = async () => {
+    const post = () => {
       const uEl = document.getElementById('vlog-user');
       const mEl = document.getElementById('vlog-msg');
       const btn = document.getElementById('vlog-btn');
-      const user = (uEl.value.trim() || 'anonymous').slice(0, 20);
+      if (!mEl) return;
+      const user = (uEl?.value.trim() || 'anonymous').slice(0, 20);
       const msg  = mEl.value.trim().slice(0, 80);
-      if (!msg) { mEl.focus(); mEl.style.outline = '1px solid rgba(255,255,255,0.4)'; return; }
+      if (!msg) { mEl.focus(); mEl.style.outline = '1px solid rgba(255,255,255,0.35)'; return; }
       mEl.style.outline = '';
-      btn.textContent = 'POSTING…'; btn.disabled = true;
-      const entries = await load();
+
+      /* Instant — no async, no waiting */
+      const entries = load();
       entries.push({ user, msg, ts: Date.now() });
       if (entries.length > MAX) entries.splice(0, entries.length - MAX);
-      await save(entries);
+      save(entries);
       render(entries);
-      mEl.value = ''; btn.textContent = 'POST →'; btn.disabled = false;
+      mEl.value = '';
+      if (uEl) uEl.value = '';
+
       const flash = document.getElementById('vlog-flash');
-      if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 2000); }
+      if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1600); }
     };
 
     document.getElementById('vlog-btn')?.addEventListener('click', post);
     document.getElementById('vlog-msg')?.addEventListener('keydown', e => { if (e.key === 'Enter') post(); });
 
-    load().then(render);
-    setInterval(() => load().then(render), 30000);
+    /* Initial render */
+    render(load());
+
+    /* Refresh timestamps every 60s */
+    setInterval(() => render(load()), 60000);
+  })();
   })();
 
 </script>
@@ -1331,6 +1294,6 @@
 
 })();
 </script>
-<div class="vlog-flash" id="vlog-flash">ENTRY LOGGED_</div>
+<div class="vlog-flash" id="vlog-flash">POSTED_</div>
 </body>
 </html>
