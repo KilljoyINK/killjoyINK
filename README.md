@@ -1,7 +1,6 @@
 # Portfolio / Art Direction Studio — GitHub Pages
 
-A minimal, cinematic portfolio website inspired by studios like Simmonds Ltd.
-Dark, typographic, full-screen editorial aesthetic.
+A minimal, cinematic portfolio.
 
 ---
 
