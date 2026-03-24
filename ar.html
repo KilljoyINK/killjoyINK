@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ink Consulting AR Viewer — Experience engineering models in Augmented Reality on any device.">
+  <title>AR Viewer — Ink Consulting</title>
+
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ── LAYOUT ── */
+    .ar-wrap {
+      padding-top: var(--nav-h);
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    /* ── HEADER ── */
+    .ar-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .ar-title {
+      font-family: var(--display);
+      font-size: clamp(38px, 5vw, 60px);
+      line-height: .92; letter-spacing: .02em;
+      color: var(--text);
+    }
+    .ar-title span { color: var(--accent); }
+    .ar-caption {
+      font-size: 9px; letter-spacing: .16em;
+      color: var(--text-dim); text-align: right; line-height: 2;
+      max-width: 280px;
+    }
+
+    /* ── MAIN GRID ── */
+    .ar-main {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      overflow: hidden;
+    }
+
+    /* ── BIG VIEWER ── */
+    .ar-viewer-col {
+      position: relative;
+      border-right: 1px solid var(--border);
+      background: radial-gradient(ellipse at 30% 40%, #0c1a10 0%, #030303 70%);
+    }
+
+    #ar-main-mv {
+      width: 100%; height: 100%;
+      min-height: calc(100vh - var(--nav-h) - 200px);
+      --poster-color: transparent;
+    }
+
+    /* AR button */
+    #ar-main-mv [slot="ar-button"] {
+      position: absolute;
+      bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 24px;
+      border: 1px solid var(--accent);
+      background: rgba(0,224,122,0.08);
+      color: var(--accent); font-family: var(--font);
+      font-size: 10px; letter-spacing: .18em;
+      cursor: pointer; text-transform: uppercase;
+      transition: all .2s; white-space: nowrap;
+    }
+    #ar-main-mv [slot="ar-button"]:hover {
+      background: rgba(0,224,122,0.22);
+    }
+    #ar-main-mv [slot="ar-button"] .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); animation: blink 1.4s infinite;
+    }
+
+    /* Progress bar */
+    #ar-main-mv [slot="progress-bar"] {
+      height: 2px;
+      background: var(--bg-2);
+      position: absolute;
+      top: 0; left: 0; right: 0;
+    }
+
+    /* Drop zone */
+    .ar-drop-zone {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; transition: opacity .3s;
+    }
+    .ar-drop-zone.hidden { opacity: 0; pointer-events: none; }
+    .ar-drop-box {
+      width: 80px; height: 80px;
+      border: 1px solid var(--border-hi);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; color: var(--text-dim);
+    }
+    .ar-drop-text {
+      font-size: 10px; letter-spacing: .16em;
+      color: var(--text-dim); text-align: center; line-height: 2;
+    }
+    .ar-drop-text b { color: var(--accent); }
+
+    /* Viewer overlays */
+    .viewer-badge {
+      position: absolute; top: 16px; left: 16px;
+      display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none;
+    }
+    .ar-status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      background: rgba(4,4,4,0.7);
+      font-size: 8px; letter-spacing: .16em; color: var(--text-dim);
+    }
+    .ar-status-badge.active-ar {
+      border-color: var(--accent); color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .viewer-hint {
+      position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+      font-size: 9px; letter-spacing: .14em; color: var(--text-dim);
+      pointer-events: none; text-align: center; white-space: nowrap;
+    }
+
+    /* Crosshair decorations */
+    .crosshair {
+      position: absolute; pointer-events: none;
+      width: 24px; height: 24px;
+    }
+    .ch-tl { top: 10px; left: 10px; border-top: 1px solid var(--border-hi); border-left: 1px solid var(--border-hi); }
+    .ch-tr { top: 10px; right: 10px; border-top: 1px solid var(--border-hi); border-right: 1px solid var(--border-hi); }
+    .ch-bl { bottom: 10px; left: 10px; border-bottom: 1px solid var(--border-hi); border-left: 1px solid var(--border-hi); }
+    .ch-br { bottom: 10px; right: 10px; border-bottom: 1px solid var(--border-hi); border-right: 1px solid var(--border-hi); }
+
+    /* ── SIDEBAR ── */
+    .ar-sidebar {
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Upload Panel */
+    .sidebar-panel {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-panel-label {
+      font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sidebar-panel-label::after {
+      content:''; flex:1; height:1px; background: var(--border);
+    }
+
+    .upload-area {
+      border: 1px dashed var(--border-hi);
+      padding: 18px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .18s;
+      position: relative;
+    }
+    .upload-area:hover, .upload-area.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    }
+    .upload-icon { font-size: 20px; color: var(--text-dim); margin-bottom: 6px; }
+    .upload-text {
+      font-size: 9px; letter-spacing: .14em; color: var(--text-dim); line-height: 1.8;
+    }
+    .upload-text b { color: var(--accent); }
+
+    /* Model List */
+    .ar-model-list {
+      flex: 1; overflow-y: auto;
+      padding: 8px 0;
+    }
+    .model-item {
+      padding: 10px 20px;
+      display: grid; grid-template-columns: auto 1fr auto;
+      align-items: center; gap: 12px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all .15s;
+    }
+    .model-item:hover { background: var(--bg-2); border-left-color: var(--border-hi); }
+    .model-item.active { background: var(--bg-2); border-left-color: var(--accent); }
+    .model-item.active .mi-name { color: var(--accent); }
+    .mi-icon {
+      width: 32px; height: 32px;
+      background: var(--bg-3); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mi-icon svg {
+      width: 14px; height: 14px;
+      fill: none; stroke: var(--text-mid); stroke-width: 1.5;
+    }
+    .mi-name { font-size: 10px; letter-spacing: .04em; color: var(--text); }
+    .mi-meta { font-size: 8px; letter-spacing: .1em; color: var(--text-dim); }
+    .mi-ar {
+      font-size: 8px; letter-spacing: .12em; color: var(--text-dim);
+      padding: 2px 6px; border: 1px solid var(--border);
+    }
+    .mi-ar.supported { color: var(--accent); border-color: var(--accent); }
+
+    /* Info panel bottom */
+    .ar-info-panel {
+      border-top: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .info-row {
+      display: flex; justify-content: space-between;
+      font-size: 9px; letter-spacing: .1em;
+    }
+    .info-key { color: var(--text-dim); }
+    .info-val { color: var(--text); }
+
+    /* ── AR DEVICE SUPPORT BANNER ── */
+    .ar-support-bar {
+      padding: 10px 40px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-1);
+      display: flex; align-items: center; gap: 32px;
+      flex-wrap: wrap;
+    }
+    .support-item {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 9px; letter-spacing: .14em; color: var(--text-mid);
+    }
+    .support-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .support-dot.partial { background: var(--text-mid); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      .ar-main { grid-template-columns: 1fr; }
+      .ar-viewer-col { border-right: none; border-bottom: 1px solid var(--border); }
+      #ar-main-mv { min-height: 60vw; }
+      .ar-sidebar { max-height: 50vh; }
+      .ar-header { padding: 24px 20px 16px; flex-direction: column; gap: 12px; align-items: flex-start; }
+      .ar-support-bar { padding: 10px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav>
+  <a href="index.html" class="nav-logo">INK <span>CONSULTING</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">HOME</a></li>
+    <li><a href="projects.html">PROJECTS</a></li>
+    <li><a href="ar.html" class="active">AR VIEWER</a></li>
+    <li><a href="index.html#chat">CONTACT</a></li>
+  </ul>
+  <div class="nav-meta">
+    <div class="status-dot"></div>
+    <span>AR READY</span>
+  </div>
+</nav>
+
+<!-- ══════════════ PAGE ══════════════ -->
+<div class="ar-wrap">
+
+  <!-- Header -->
+  <div>
+    <div class="ar-header">
+      <div>
+        <div class="label" style="margin-bottom:12px">// SPATIAL COMPUTING INTERFACE</div>
+        <h1 class="ar-title">AUGMENTED<br><span>REALITY</span><br>VIEWER</h1>
+      </div>
+      <div class="ar-caption">
+        UPLOAD ANY .GLB FILE TO VIEW<br>
+        IN AUGMENTED REALITY<br>
+        WORKS ON ANDROID · iOS · DESKTOP
+      </div>
+    </div>
+
+    <div class="ar-support-bar">
+      <div class="support-item"><div class="support-dot"></div> ANDROID ARCCORE (SCENE VIEWER)</div>
+      <div class="support-item"><div class="support-dot"></div> iOS AR QUICK LOOK</div>
+      <div class="support-item"><div class="support-dot"></div> WEBXR DESKTOP (CHROME/EDGE)</div>
+      <div class="support-item"><div class="support-dot partial"></div> FIREFOX (3D ONLY)</div>
+    </div>
+  </div>
+
+  <div class="ar-main">
+
+    <div class="ar-viewer-col" id="ar-drop-target">
+
+      <div class="crosshair ch-tl"></div>
+      <div class="crosshair ch-tr"></div>
+      <div class="crosshair ch-bl"></div>
+      <div class="crosshair ch-br"></div>
+
+      <div class="viewer-badge">
+        <div class="ar-status-badge" id="ar-status-badge">
+          <div class="status-dot" style="width:4px;height:4px"></div>
+          3D VIEW
+        </div>
+      </div>
+
+      <model-viewer
+        id="ar-main-mv"
+        alt="AR model viewer"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="auto"
+        camera-controls
+        auto-rotate
+        auto-rotate-delay="1500"
+        rotation-per-second="12deg"
+        shadow-intensity="1.2"
+        shadow-softness="1"
+        exposure=".9"
+        environment-image="neutral"
+        loading="eager"
+      >
+        <button slot="ar-button">
+          <div class="dot"></div> LAUNCH AUGMENTED REALITY
+        </button>
+        <div slot="progress-bar"></div>
+      </model-viewer>
+
+      <div class="ar-drop-zone" id="ar-drop-zone">
+        <div class="ar-drop-box">⬡</div>
+        <div class="ar-drop-text">
+          DRAG &amp; DROP YOUR <b>.GLB</b> FILE<br>
+          or select from the list →
+        </div>
+        <button class="btn btn-green" id="dz-upload-btn">
+          UPLOAD .GLB FILE
+        </button>
+      </div>
+
+      <div class="viewer-hint" id="viewer-hint">
+        DRAG TO ROTATE · SCROLL TO ZOOM · PINCH ON MOBILE
+      </div>
+
+    </div>
+
+    <div class="ar-sidebar">
+
+      <div class="sidebar-panel">
+        <div class="sidebar-panel-label">UPLOAD MODEL</div>
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="file-upload" accept=".glb,.gltf">
+          <div class="upload-icon">⬡</div>
+          <div class="upload-text">
+            DRAG .GLB / .GLTF HERE<br>
+            or <b>CLICK TO BROWSE</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-panel" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="sidebar-panel-label">PRESET MODELS</div>
+        <div class="ar-model-list" id="ar-model-list"></div>
+      </div>
+
+      <div class="ar-info-panel">
+        <div class="sidebar-panel-label" style="margin-bottom:0">ACTIVE MODEL</div>
+        <div class="info-row"><span class="info-key">FILE</span><span class="info-val" id="info-file">—</span></div>
+        <div class="info-row"><span class="info-key">FORMAT</span><span class="info-val">.GLB (Binary glTF)</span></div>
+        <div class="info-row"><span class="info-key">AR MODE</span><span class="info-val" id="info-ar-mode">DETECTING…</span></div>
+        <div class="info-row"><span class="info-key">SCALE</span><span class="info-val">AUTO</span></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span>© 2025 INK CONSULTING ENGINEERING · AR VIEWER</span>
+    <div style="display:flex;gap:24px">
+      <a href="projects.html">PROJECTS</a>
+      <a href="index.html">HOME</a>
+    </div>
+  </footer>
+
+</div><!-- /ar-wrap -->
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script type="module">
+  const mainMV     = document.getElementById('ar-main-mv');
+  const dropZone   = document.getElementById('ar-drop-zone');
+  const dropTarget = document.getElementById('ar-drop-target');
+  const fileUpload = document.getElementById('file-upload');
+  const infoFile   = document.getElementById('info-file');
+  const arBadge    = document.getElementById('ar-status-badge');
+  const arModeEl   = document.getElementById('info-ar-mode');
+
+  document.getElementById('dz-upload-btn').addEventListener('click', () => fileUpload.click());
+
+  const FALLBACK_AR_MODE = 'SCENE VIEWER / QUICK LOOK';
+
+  // ── Preset model list (matches your models/ folder) ──────────────────
+  const PRESETS = [
+    { name:'Autonomous Ground Vehicle', file:'models/project-01.glb', ar:true },
+    { name:'Soft Actuator Array',        file:'models/project-02.glb', ar:true },
+    { name:'Structural Health Monitor',  file:'models/project-03.glb', ar:true },
+    { name:'LiDAR Terrain Map',          file:'models/project-04.glb', ar:false },
+    { name:'Aerial Swarm Node',          file:'models/project-06.glb', ar:true },
+    { name:'Bridge Section Model',       file:'models/project-10.glb', ar:true },
+    { name:'Articulated Arm',            file:'models/project-11.glb', ar:true },
+    { name:'Urban Concept Block',        file:'models/project-13.glb', ar:false },
+  ];
+
+  const GLB_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`;
+
+  const list = document.getElementById('ar-model-list');
+  PRESETS.forEach((preset, i) => {
+    const el = document.createElement('div');
+    el.className = 'model-item' + (i === 0 ? ' active' : '');
+    el.innerHTML = `
+      <div class="mi-icon">${GLB_ICON}</div>
+      <div>
+        <div class="mi-name">${preset.name}</div>
+        <div class="mi-meta">${preset.file.split('/').pop()}</div>
+      </div>
+      <div class="mi-ar ${preset.ar ? 'supported' : ''}">${preset.ar ? 'AR' : '3D'}</div>
+    `;
+    el.addEventListener('click', () => {
+      loadModel(preset.file, preset.name);
+      list.querySelectorAll('.model-item').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+    });
+    list.appendChild(el);
+  });
+
+  loadModel(PRESETS[0].file, PRESETS[0].name);
+
+  function loadModel(src, name) {
+    mainMV.src = src;
+    infoFile.textContent = name || src.split('/').pop();
+    dropZone.classList.remove('hidden');
+    mainMV.addEventListener('load', () => dropZone.classList.add('hidden'), { once: true });
+  }
+
+  function handleFile(file) {
+    if (!file || (!file.name.endsWith('.glb') && !file.name.endsWith('.gltf'))) return;
+    const url = URL.createObjectURL(file);
+    loadModel(url, file.name);
+    const el = document.createElement('div');
+    el.className = 'model-item active';
+    el.innerHTML = `
+      <div class="mi-icon">${GLB_ICON}</div>
+      <div>
+        <div class="mi-name">${file.name}</div>
+        <div class="mi-meta">UPLOADED</div>
+      </div>
+      <div class="mi-ar supported">AR</div>
+    `;
+    el.addEventListener('click', () => {
+      loadModel(url, file.name);
+      list.querySelectorAll('.model-item').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+    });
+    list.querySelectorAll('.model-item').forEach(x => x.classList.remove('active'));
+    list.insertBefore(el, list.firstChild);
+  }
+
+  fileUpload.addEventListener('change', () => handleFile(fileUpload.files[0]));
+
+  ['dragenter','dragover'].forEach(ev =>
+    dropTarget.addEventListener(ev, e => { e.preventDefault(); dropTarget.style.background='rgba(0,224,122,0.03)'; })
+  );
+  ['dragleave','dragend'].forEach(ev =>
+    dropTarget.addEventListener(ev, () => { dropTarget.style.background=''; })
+  );
+  dropTarget.addEventListener('drop', e => {
+    e.preventDefault();
+    dropTarget.style.background = '';
+    handleFile(e.dataTransfer.files[0]);
+  });
+
+  const uploadArea = document.getElementById('upload-area');
+  ['dragenter','dragover'].forEach(ev =>
+    uploadArea.addEventListener(ev, e => { e.preventDefault(); uploadArea.classList.add('drag-over'); })
+  );
+  ['dragleave','drop'].forEach(ev =>
+    uploadArea.addEventListener(ev, () => uploadArea.classList.remove('drag-over'))
+  );
+
+  mainMV.addEventListener('ar-status', e => {
+    if (e.detail.status === 'session-started') {
+      arBadge.textContent = '● AR ACTIVE';
+      arBadge.classList.add('active-ar');
+    } else {
+      arBadge.innerHTML = '<div class="status-dot" style="width:4px;height:4px;border-radius:50%;background:var(--accent);animation:blink 2.4s infinite"></div> 3D VIEW';
+      arBadge.classList.remove('active-ar');
+    }
+  });
+
+  if ('xr' in navigator) {
+    navigator.xr.isSessionSupported('immersive-ar')
+      .then(supported => { arModeEl.textContent = supported ? 'WEBXR SUPPORTED' : FALLBACK_AR_MODE; })
+      .catch(()        => { arModeEl.textContent = FALLBACK_AR_MODE; });
+  } else {
+    arModeEl.textContent = FALLBACK_AR_MODE;
+  }
+</script>
+
+</body>
+</html>
