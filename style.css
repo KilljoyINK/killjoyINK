@@ -7,18 +7,18 @@
 /* ── TOKENS ── */
 :root {
   --nav-h:      52px;
-  --bg-0:       #020804;
-  --bg-1:       #070e09;
-  --bg-2:       #0d1a0f;
-  --bg-chat:    #060f08;
-  --border:     rgba(255,255,255,0.06);
-  --border-hi:  rgba(0,200,100,0.22);
-  --text:       #ddeade;
-  --text-mid:   #7fa882;
-  --text-dim:   #3e5242;
-  --accent:     #00e07a;
+  --bg-0:       #020408;
+  --bg-1:       #06080f;
+  --bg-2:       #0a0f1a;
+  --bg-chat:    #04080f;
+  --border:     rgba(255,255,255,0.055);
+  --border-hi:  rgba(0,180,255,0.22);
+  --text:       #d8eaf5;
+  --text-mid:   #5a8faa;
+  --text-dim:   #2e4a5a;
+  --accent:     #00c8ff;
   --accent2:    #ff4d4d;
-  --accent-dim: rgba(0,224,122,0.07);
+  --accent-dim: rgba(0,200,255,0.07);
   --font:       'IBM Plex Mono', 'Courier New', monospace;
 }
 
@@ -26,17 +26,61 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  background: var(--bg-0);
+  background-color: var(--bg-0);
+  background-image:
+    linear-gradient(rgba(0,200,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,200,255,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
   color: var(--text);
   font-family: var(--font);
   font-size: 13px;
   line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  cursor: none;
 }
-a { color: inherit; text-decoration: none; }
-button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+a { color: inherit; text-decoration: none; cursor: none; }
+button { font-family: var(--font); cursor: none; border: none; background: none; }
 img, model-viewer { display: block; }
+
+/* ── CUSTOM PLUS CURSOR ── */
+#cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+}
+#cursor::before,
+#cursor::after {
+  content: '';
+  position: absolute;
+  background: var(--accent);
+}
+/* vertical bar */
+#cursor::before {
+  width: 1px;
+  height: 20px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+/* horizontal bar */
+#cursor::after {
+  width: 20px;
+  height: 1px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+/* center dot */
+#cursor-dot {
+  position: fixed;
+  width: 3px; height: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px var(--accent);
+}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 4px; }

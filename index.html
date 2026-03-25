@@ -29,7 +29,7 @@
       height: 100%;
       min-height: calc(100vh - var(--nav-h));
       --poster-color: transparent;
-      background: radial-gradient(ellipse at 40% 50%, #0e1a12 0%, #020804 75%);
+      background: radial-gradient(ellipse at 40% 50%, #05101a 0%, #020408 75%);
     }
     .viewer-meta {
       position: absolute;
@@ -95,7 +95,6 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      border-radius: 0;
     }
 
     .chat-header {
@@ -116,7 +115,6 @@
       padding: 3px 9px;
     }
 
-    /* Message feed */
     .chat-feed {
       background: rgba(0,0,0,0.4);
       border: 1px solid var(--border);
@@ -127,7 +125,9 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      transition: border-color .3s;
     }
+    .chat-feed.flash { border-color: var(--accent); }
     .feed-empty {
       margin: auto;
       font-size: 9px; letter-spacing: .14em;
@@ -156,7 +156,6 @@
     }
     .msg-time { font-size: 8px; color: var(--text-dim); }
 
-    /* Inputs */
     .chat-inputs { display: flex; flex-direction: column; gap: 8px; }
     .chat-input {
       width: 100%;
@@ -169,6 +168,7 @@
       outline: none;
       letter-spacing: .05em;
       transition: border-color .18s;
+      cursor: none;
     }
     .chat-input:focus { border-color: var(--accent); }
     .chat-input::placeholder { color: var(--text-dim); font-size: 9px; letter-spacing: .12em; }
@@ -191,12 +191,9 @@
       font-family: var(--font);
       font-size: 9px; letter-spacing: .18em;
       font-weight: 600;
-      cursor: pointer;
       transition: opacity .18s;
     }
-    .post-btn:hover { opacity: .85; }
-
-    .chat-feed.flash { border-color: var(--accent); }
+    .post-btn:hover { opacity: .82; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
@@ -213,6 +210,10 @@
   </style>
 </head>
 <body>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
 
 <!-- NAV -->
 <nav>
@@ -270,7 +271,7 @@
     </div>
 
     <div class="viewer-meta">
-      LAT <span>33.7490° N</span> &nbsp;|&nbsp; LON <span>84.3880° W</span><br>
+      LAT <span id="live-lat">33.7490° N</span> &nbsp;|&nbsp; LON <span id="live-lon">84.3880° W</span><br>
       ALT <span>320 M</span> &nbsp;|&nbsp; ALPHARETTA, GA
     </div>
   </div>
@@ -364,7 +365,7 @@
   ['dragenter','dragover'].forEach(evt =>
     dropTarget.addEventListener(evt, e => {
       e.preventDefault();
-      dropTarget.style.background = 'rgba(0,224,122,0.04)';
+      dropTarget.style.background = 'rgba(0,200,255,0.04)';
     })
   );
   ['dragleave','dragend'].forEach(evt =>
@@ -459,5 +460,39 @@
 
   renderFeed();
 </script>
+
+<script>
+  /* ── CUSTOM PLUS CURSOR + LIVE LAT/LON ── */
+  const cursor    = document.getElementById('cursor');
+  const cursorDot = document.getElementById('cursor-dot');
+  const liveLat   = document.getElementById('live-lat');
+  const liveLon   = document.getElementById('live-lon');
+
+  const BASE_LAT  =  33.7490;
+  const BASE_LON  = -84.3880;
+  const LAT_RANGE =  0.08;
+  const LON_RANGE =  0.12;
+
+  function formatLat(deg) {
+    return Math.abs(deg).toFixed(4) + '° ' + (deg >= 0 ? 'N' : 'S');
+  }
+  function formatLon(deg) {
+    return Math.abs(deg).toFixed(4) + '° ' + (deg >= 0 ? 'E' : 'W');
+  }
+
+  document.addEventListener('mousemove', e => {
+    cursor.style.left    = e.clientX + 'px';
+    cursor.style.top     = e.clientY + 'px';
+    cursorDot.style.left = e.clientX + 'px';
+    cursorDot.style.top  = e.clientY + 'px';
+
+    const xRatio = e.clientX / window.innerWidth;
+    const yRatio = e.clientY / window.innerHeight;
+
+    liveLat.textContent = formatLat(BASE_LAT + (0.5 - yRatio) * LAT_RANGE);
+    liveLon.textContent = formatLon(BASE_LON + (xRatio - 0.5) * LON_RANGE);
+  });
+</script>
+
 </body>
 </html>
