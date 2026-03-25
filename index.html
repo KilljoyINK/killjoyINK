@@ -5,256 +5,243 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Ink Consulting — Engineering Design Firm. AR visualization, structural analysis, and spatial computing.">
   <title>Ink Consulting — Engineering Design Firm</title>
-
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <link rel="stylesheet" href="style.css">
-
   <style>
-    /* ── PAGE LAYOUT ── */
+
+    /* ── LAYOUT ── */
     .hero {
-      display:grid;
+      display: grid;
       grid-template-columns: 56fr 44fr;
-      min-height:100vh;
+      min-height: 100vh;
       padding-top: var(--nav-h);
     }
 
-    /* ── LEFT PANEL : Model Viewer ── */
+    /* ── LEFT: MODEL VIEWER ── */
     .panel-viewer {
-      position:relative;
-      background:var(--bg-1);
-      border-right:1px solid var(--border);
-      overflow:hidden;
+      position: relative;
+      background: var(--bg-1);
+      border-right: 1px solid var(--border);
+      overflow: hidden;
     }
+    .panel-viewer model-viewer {
+      width: 100%;
+      height: 100%;
+      min-height: calc(100vh - var(--nav-h));
+      --poster-color: transparent;
+      background: radial-gradient(ellipse at 40% 50%, #0e1a12 0%, #020804 75%);
+    }
+    .viewer-meta {
+      position: absolute;
+      bottom: 18px; left: 18px;
+      font-size: 9px; letter-spacing: .1em;
+      color: var(--text-dim); line-height: 2;
+      pointer-events: none;
+    }
+    .viewer-meta span { color: var(--accent); }
 
-    model-viewer#hero-mv {
-      width:100%; height:100%;
-      min-height:calc(100vh - var(--nav-h));
-      --poster-color:transparent;
-      background: radial-gradient(ellipse at 40% 50%, #0e1a12 0%, #040404 70%);
-    }
-
-    .drop-zone {
-      position:absolute; inset:0;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      gap:12px; pointer-events:none;
-      opacity:1; transition:opacity .3s;
-    }
-    .drop-zone.hidden { opacity:0; }
-    .drop-zone-icon {
-      width:60px; height:60px;
-      border:1px solid var(--border-hi);
-      display:flex; align-items:center; justify-content:center;
-      font-size:22px; color:var(--text-dim);
-    }
-    .drop-zone-text {
-      font-size:9px; letter-spacing:.18em;
-      color:var(--text-dim); text-align:center; line-height:2;
-    }
-    .drop-zone-text b { color:var(--accent); }
-
-    /* AR button slot */
-    #hero-mv [slot="ar-button"] {
-      position:absolute;
-      bottom:20px; right:20px;
-      display:inline-flex; align-items:center; gap:6px;
-      padding:8px 14px;
-      border:1px solid var(--accent);
-      background:rgba(0,224,122,0.08);
-      color:var(--accent);
-      font-family:var(--font); font-size:9px; letter-spacing:.18em;
-      cursor:pointer; text-transform:uppercase;
-      transition:all .2s;
-    }
-    #hero-mv [slot="ar-button"]:hover {
-      background:rgba(0,224,122,0.2);
-    }
-    #hero-mv [slot="ar-button"] .dot {
-      width:5px; height:5px; border-radius:50%;
-      background:var(--accent);
-      animation:blink 1.6s ease-in-out infinite;
-    }
-
-    .vw-bl {
-      position:absolute; bottom:18px; left:18px;
-      font-size:9px; letter-spacing:.1em;
-      color:var(--text-dim); line-height:1.9;
-      pointer-events:none;
-    }
-    .vw-bl span { color:var(--accent); }
-    .vw-hint {
-      font-size:9px; letter-spacing:.12em;
-      color:var(--text-dim); margin-top:6px;
-      animation:fadein .8s ease both;
-    }
-    @keyframes fadein{ from{opacity:0} to{opacity:1} }
-
-    /* corner brackets (decorative) */
-    .corner { position:absolute; width:16px; height:16px; }
-    .corner-tl { top:10px; left:10px; border-top:1px solid var(--border-hi); border-left:1px solid var(--border-hi); }
-    .corner-tr { top:10px; right:10px; border-top:1px solid var(--border-hi); border-right:1px solid var(--border-hi); }
-    .corner-bl { bottom:10px; left:10px; border-bottom:1px solid var(--border-hi); border-left:1px solid var(--border-hi); }
-    .corner-br { bottom:10px; right:10px; border-bottom:1px solid var(--border-hi); border-right:1px solid var(--border-hi); }
-
-    /* ── RIGHT PANEL : Info + Chat ── */
+    /* ── RIGHT: CONTENT ── */
     .panel-right {
-      display:flex; flex-direction:column;
-      padding:100px 44px 40px;
-      max-height:calc(100vh - var(--nav-h));
-      overflow-y:auto;
+      display: flex;
+      flex-direction: column;
+      padding: 100px 44px 40px;
+      max-height: calc(100vh - var(--nav-h));
+      overflow-y: auto;
     }
 
     .eyebrow {
-      font-size:9px; letter-spacing:.22em; text-transform:uppercase;
-      color:var(--text-dim); margin-bottom:22px;
+      font-size: 9px; letter-spacing: .22em;
+      color: var(--text-dim); margin-bottom: 20px;
     }
 
     .site-title {
-      font-family:var(--display);
-      font-size:clamp(52px, 6vw, 80px);
-      line-height:.92; letter-spacing:.02em;
-      color:var(--text); margin-bottom:26px;
+      font-family: var(--font);
+      font-size: clamp(44px, 5.5vw, 72px);
+      line-height: 1.05; letter-spacing: .02em;
+      color: var(--text); margin-bottom: 22px;
+      font-weight: 600;
     }
-    .site-title em { color:var(--accent); font-style:normal; }
+    .site-title em { color: var(--accent); font-style: normal; }
 
     .site-desc {
-      font-size:12px; line-height:1.9;
-      color:var(--text-mid); max-width:380px; margin-bottom:28px;
+      font-size: 11px; line-height: 1.95;
+      color: var(--text-mid); max-width: 380px;
+      margin-bottom: 24px;
     }
 
     .tag-row {
-      display:flex; flex-wrap:wrap; gap:6px; margin-bottom:32px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-bottom: 36px;
     }
     .tag {
-      font-size:9px; letter-spacing:.14em;
-      padding:3px 8px;
-      border:1px solid var(--border);
-      color:var(--text-dim);
+      font-size: 8px; letter-spacing: .14em;
+      padding: 3px 9px;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
     }
 
-    .cta-row {
-      display:flex; gap:10px; flex-wrap:wrap;
+    /* ── CHAT BOX ── */
+    .chat-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* ── CHAT ── */
-    .chat-wrap {
-      margin-top:32px;
-      background:#0d1a10;
-      border:1px solid var(--border-hi);
-      border-top:2px solid var(--accent);
-      padding:22px 24px 24px;
+    .chat-box {
+      background: var(--bg-chat);
+      border: 1px solid var(--border-hi);
+      border-top: 3px solid var(--accent);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-radius: 0;
     }
 
-    .chat-topbar {
-      display:flex; justify-content:space-between; align-items:center;
-      margin-bottom:14px;
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .chat-label {
-      font-size:9px; letter-spacing:.2em; color:var(--text);
+    .chat-title {
+      font-size: 10px; letter-spacing: .22em;
+      color: var(--text); font-weight: 500;
     }
-    .chat-live {
-      display:flex; align-items:center; gap:5px;
-      font-size:8px; letter-spacing:.14em; color:var(--accent);
+    .chat-live-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 8px; letter-spacing: .16em;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid var(--border-hi);
+      padding: 3px 9px;
     }
 
-    .feed {
-      background:rgba(0,0,0,0.35);
-      border:1px solid var(--border-hi);
-      min-height:148px; max-height:200px;
-      overflow-y:auto; padding:12px 14px;
-      margin-bottom:12px;
-      display:flex; flex-direction:column; gap:10px;
-      transition:border-color .3s;
+    /* Message feed */
+    .chat-feed {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      min-height: 160px;
+      max-height: 210px;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .feed.flash { border-color:var(--accent); }
     .feed-empty {
-      margin:auto; font-size:10px;
-      letter-spacing:.12em; color:var(--text-dim);
+      margin: auto;
+      font-size: 9px; letter-spacing: .14em;
+      color: var(--text-dim);
     }
-    .msg {
-      display:grid; grid-template-columns:auto 1fr;
-      gap:10px; align-items:start;
-      animation:slidein .25s ease both;
+    .chat-msg {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      animation: msg-in .2s ease both;
     }
-    @keyframes slidein{ from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+    @keyframes msg-in {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: none; }
+    }
     .msg-handle {
-      font-size:9px; letter-spacing:.08em;
-      color:var(--accent); white-space:nowrap;
+      font-size: 9px; letter-spacing: .08em;
+      color: var(--accent); white-space: nowrap;
+      font-weight: 500;
     }
+    .msg-body { display: flex; flex-direction: column; gap: 2px; }
     .msg-text {
-      font-size:11px; color:var(--text); line-height:1.5;
-      word-break:break-word;
+      font-size: 11px; color: var(--text);
+      line-height: 1.5; word-break: break-word;
     }
-    .msg-time {
-      font-size:8px; color:var(--text-dim); margin-top:2px;
-    }
+    .msg-time { font-size: 8px; color: var(--text-dim); }
 
-    .chat-form { display:flex; flex-direction:column; gap:7px; }
+    /* Inputs */
+    .chat-inputs { display: flex; flex-direction: column; gap: 8px; }
     .chat-input {
-      background:rgba(0,0,0,0.3); border:1px solid var(--border-hi);
-      color:var(--text); font-family:var(--font); font-size:11px;
-      padding:8px 12px; outline:none; letter-spacing:.05em;
-      transition:border-color .18s;
+      width: 100%;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border-hi);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 11px;
+      padding: 9px 12px;
+      outline: none;
+      letter-spacing: .05em;
+      transition: border-color .18s;
     }
-    .chat-input:focus { border-color:var(--accent); }
-    .chat-input::placeholder { color:var(--text-dim); font-size:10px; letter-spacing:.1em; }
-    .chat-input.error { border-color:var(--accent2); }
-
-    .chat-row { display:grid; grid-template-columns:1fr auto; gap:7px; }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-input::placeholder { color: var(--text-dim); font-size: 9px; letter-spacing: .12em; }
+    .chat-input.shake { border-color: var(--accent2); animation: shake .3s ease; }
+    @keyframes shake {
+      0%,100% { transform: none; }
+      25%      { transform: translateX(-4px); }
+      75%      { transform: translateX(4px); }
+    }
+    .chat-bottom-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
     .post-btn {
-      padding:8px 18px;
-      background:var(--accent-dim); border:1px solid var(--accent);
-      color:var(--accent); font-family:var(--font);
-      font-size:10px; letter-spacing:.15em; cursor:pointer;
-      transition:all .18s;
+      padding: 9px 20px;
+      background: var(--accent);
+      border: none;
+      color: var(--bg-0);
+      font-family: var(--font);
+      font-size: 9px; letter-spacing: .18em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .18s;
     }
-    .post-btn:hover { background:var(--accent); color:var(--bg-0); }
+    .post-btn:hover { opacity: .85; }
+
+    .chat-feed.flash { border-color: var(--accent); }
 
     /* ── RESPONSIVE ── */
-    @media(max-width:900px){
+    @media (max-width: 900px) {
       .hero {
-        grid-template-columns:1fr;
-        grid-template-rows:60vh auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: 55vh auto;
       }
-      model-viewer#hero-mv { min-height:60vh; }
+      .panel-viewer model-viewer { min-height: 55vh; }
       .panel-right {
-        max-height:none; padding:32px 22px 36px;
+        max-height: none;
+        padding: 48px 22px 40px;
       }
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════════ NAV ══════════════ -->
+<!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">INK <span>CONSULTING</span></a>
   <ul class="nav-links">
     <li><a href="index.html" class="active">HOME</a></li>
     <li><a href="projects.html">PROJECTS</a></li>
     <li><a href="ar.html">AR VIEWER</a></li>
-    <li><a href="#chat">CONTACT</a></li>
   </ul>
-  <div class="nav-meta">
-    <div class="status-dot"></div>
+  <div class="nav-status">
+    <div class="dot-live"></div>
     <span>SYS.ONLINE</span>
   </div>
 </nav>
 
-<!-- ══════════════ HERO ══════════════ -->
+<!-- HERO -->
 <main class="hero">
 
-  <!-- ── LEFT: Model Viewer ── -->
+  <!-- LEFT: 3D Model -->
   <div class="panel-viewer" id="drop-target">
     <div class="corner corner-tl"></div>
     <div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div>
     <div class="corner corner-br"></div>
 
-    <!-- model-viewer — replace src with models/hero.glb -->
     <model-viewer
       id="hero-mv"
       src="models/hero.glb"
-      alt="Ink Consulting — featured engineering model"
+      alt="Ink Consulting featured engineering model"
       ar
       ar-modes="webxr scene-viewer quick-look"
       ar-scale="auto"
@@ -269,7 +256,7 @@
       loading="eager"
     >
       <button slot="ar-button">
-        <div class="dot"></div>
+        <span class="ar-dot"></span>
         VIEW IN AR
       </button>
     </model-viewer>
@@ -280,16 +267,15 @@
         DRAG &amp; DROP <b>.GLB</b> FILE HERE<br>
         or place <b>models/hero.glb</b> in repo
       </div>
-      <div class="vw-hint">DRAG TO ROTATE · SCROLL TO ZOOM</div>
     </div>
 
-    <div class="vw-bl">
+    <div class="viewer-meta">
       LAT <span>33.7490° N</span> &nbsp;|&nbsp; LON <span>84.3880° W</span><br>
       ALT <span>320 M</span> &nbsp;|&nbsp; ALPHARETTA, GA
     </div>
   </div>
 
-  <!-- ── RIGHT: Info + Chat ── -->
+  <!-- RIGHT: Info + Chat -->
   <div class="panel-right">
 
     <div class="eyebrow">// INK CONSULTING · EST. 2018 · ENGINEERING DESIGN</div>
@@ -301,7 +287,9 @@
     </h1>
 
     <p class="site-desc">
-      Ink Consulting is an engineering design firm pushing the boundary between prototype and production. We build systems that perform under pressure — from spatial computing and AR experiences to structural analysis and embedded firmware.
+      Ink Consulting is an engineering design firm pushing the boundary between prototype and production.
+      We build systems that perform under pressure — from spatial computing and AR experiences
+      to structural analysis and embedded firmware.
     </p>
 
     <div class="tag-row">
@@ -313,130 +301,163 @@
       <span class="tag">ALPHARETTA, GA</span>
     </div>
 
-    <div class="cta-row">
-      <a href="projects.html" class="btn btn-green">VIEW PROJECTS →</a>
-      <a href="ar.html" class="btn">AR VIEWER →</a>
+    <!-- CHAT -->
+    <div class="chat-section">
+      <div class="chat-box" id="chat">
+
+        <div class="chat-header">
+          <span class="chat-title">// LEAVE A MESSAGE</span>
+          <div class="chat-live-badge">
+            <div class="dot-live" style="width:4px;height:4px;box-shadow:none"></div>
+            LIVE
+          </div>
+        </div>
+
+        <div class="chat-feed" id="chat-feed">
+          <div class="feed-empty">NO MESSAGES YET</div>
+        </div>
+
+        <div class="chat-inputs">
+          <input
+            id="inp-handle"
+            class="chat-input"
+            type="text"
+            placeholder="// YOUR HANDLE"
+            maxlength="32"
+            autocomplete="off"
+          >
+          <div class="chat-bottom-row">
+            <input
+              id="inp-msg"
+              class="chat-input"
+              type="text"
+              placeholder="// YOUR MESSAGE"
+              maxlength="240"
+              autocomplete="off"
+            >
+            <button class="post-btn" id="post-btn">POST →</button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <div class="chat-wrap" id="chat">
-
-      <div class="chat-topbar">
-        <span class="chat-label">// LEAVE A MESSAGE</span>
-        <div class="chat-live">
-          <div class="status-dot" style="width:4px;height:4px"></div>
-          LIVE
-        </div>
-      </div>
-
-      <div class="feed" id="feed">
-        <div class="feed-empty">NO ENTRIES YET</div>
-      </div>
-
-      <div class="chat-form">
-        <input id="inp-handle" class="chat-input" type="text"
-          placeholder="// HANDLE" maxlength="32" autocomplete="off">
-        <div class="chat-row">
-          <input id="inp-msg" class="chat-input" type="text"
-            placeholder="// MESSAGE" maxlength="240" autocomplete="off">
-          <button class="post-btn" id="post-btn">POST →</button>
-        </div>
-      </div>
-
-    </div>
   </div>
-
 </main>
 
-<!-- ══════════════ FOOTER ══════════════ -->
+<!-- FOOTER -->
 <footer>
   <span>© 2025 INK CONSULTING ENGINEERING · ALL RIGHTS RESERVED</span>
-  <div style="display:flex;gap:24px">
+  <div class="footer-links">
     <a href="#">GITHUB</a>
     <a href="#">LINKEDIN</a>
-    <a href="/cdn-cgi/l/email-protection#a9c1ccc5c5c6e9c0c7c2cac6c7dadcc5ddc0c7ce87d1d0d3">EMAIL</a>
+    <a href="mailto:hello@inkconsulting.xyz">EMAIL</a>
   </div>
 </footer>
 
-<!-- ══════════════ SCRIPTS ══════════════ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+<script type="module">
+  /* ── DROP-TO-LOAD GLB ── */
   const dropTarget = document.getElementById('drop-target');
   const dropZone   = document.getElementById('drop-zone');
   const heroMV     = document.getElementById('hero-mv');
-  const feed       = document.getElementById('feed');
-  const hEl        = document.getElementById('inp-handle');
-  const mEl        = document.getElementById('inp-msg');
 
-  ['dragenter','dragover'].forEach(e =>
-    dropTarget.addEventListener(e, ev => { ev.preventDefault(); dropTarget.style.background='rgba(0,224,122,0.04)'; })
+  ['dragenter','dragover'].forEach(evt =>
+    dropTarget.addEventListener(evt, e => {
+      e.preventDefault();
+      dropTarget.style.background = 'rgba(0,224,122,0.04)';
+    })
   );
-  ['dragleave','dragend'].forEach(e =>
-    dropTarget.addEventListener(e, () => { dropTarget.style.background=''; })
+  ['dragleave','dragend'].forEach(evt =>
+    dropTarget.addEventListener(evt, () => {
+      dropTarget.style.background = '';
+    })
   );
-  dropTarget.addEventListener('drop', ev => {
-    ev.preventDefault();
+  dropTarget.addEventListener('drop', e => {
+    e.preventDefault();
     dropTarget.style.background = '';
-    const file = ev.dataTransfer.files[0];
+    const file = e.dataTransfer.files[0];
     if (file && file.name.endsWith('.glb')) {
-      const url = URL.createObjectURL(file);
-      heroMV.src = url;
+      heroMV.src = URL.createObjectURL(file);
       dropZone.classList.add('hidden');
     }
   });
-
   heroMV.addEventListener('load', () => dropZone.classList.add('hidden'));
 
-  const CHAT_KEY = 'ink_chat_v2';
+  /* ── CHAT ── */
+  const CHAT_KEY = 'ink_messages_v1';
+  const feed     = document.getElementById('chat-feed');
+  const inpH     = document.getElementById('inp-handle');
+  const inpM     = document.getElementById('inp-msg');
+  const postBtn  = document.getElementById('post-btn');
 
-  const getMessages = () => {
+  function getMessages() {
     try { return JSON.parse(localStorage.getItem(CHAT_KEY) || '[]'); }
     catch { return []; }
-  };
-  const saveMessages = msgs => localStorage.setItem(CHAT_KEY, JSON.stringify(msgs));
+  }
 
-  const formatTs = ts => {
+  function saveMessages(msgs) {
+    localStorage.setItem(CHAT_KEY, JSON.stringify(msgs));
+  }
+
+  function formatTime(ts) {
     const d = new Date(ts);
-    return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' ' +
-           d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-  };
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' +
+           d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
 
-  const esc = s => String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 
   function renderFeed() {
-    const msgs = getMessages().slice(0,5);
+    const msgs = getMessages().slice(0, 5);
     if (!msgs.length) {
-      feed.innerHTML = '<div class="feed-empty">NO ENTRIES YET</div>';
+      feed.innerHTML = '<div class="feed-empty">NO MESSAGES YET</div>';
       return;
     }
     feed.innerHTML = msgs.map(m => `
-      <div class="msg">
+      <div class="chat-msg">
         <span class="msg-handle">${esc(m.handle || 'ANON')}</span>
-        <div>
+        <div class="msg-body">
           <div class="msg-text">${esc(m.text)}</div>
-          <div class="msg-time">${formatTs(m.ts)}</div>
+          <div class="msg-time">${formatTime(m.ts)}</div>
         </div>
-      </div>`).join('');
+      </div>
+    `).join('');
+    feed.scrollTop = 0;
   }
 
   function postMessage() {
-    const text   = mEl.value.trim();
-    const handle = hEl.value.trim() || 'ANON';
+    const text   = inpM.value.trim();
+    const handle = inpH.value.trim() || 'ANON';
 
     if (!text) {
-      mEl.classList.add('error');
-      setTimeout(() => mEl.classList.remove('error'), 700);
+      inpM.classList.add('shake');
+      setTimeout(() => inpM.classList.remove('shake'), 400);
+      inpM.focus();
       return;
     }
 
     const msgs = getMessages();
     msgs.unshift({ handle, text, ts: Date.now() });
     saveMessages(msgs.slice(0, 60));
-    mEl.value = '';
+    inpM.value = '';
     renderFeed();
 
     feed.classList.add('flash');
-    setTimeout(() => feed.classList.remove('flash'), 900);
+    setTimeout(() => feed.classList.remove('flash'), 700);
   }
 
-  document.getElementById('post-btn').ad
+  postBtn.addEventListener('click', postMessage);
+  inpM.addEventListener('keydown', e => {
+    if (e.key === 'Enter') postMessage();
+  });
+
+  renderFeed();
+</script>
+</body>
+</html>
