@@ -99,7 +99,7 @@
     /* ── RIGHT PANEL : Info + Chat ── */
     .panel-right {
       display:flex; flex-direction:column;
-      padding:52px 44px 40px;
+      padding:100px 44px 40px;
       max-height:calc(100vh - var(--nav-h));
       overflow-y:auto;
     }
@@ -353,12 +353,12 @@
   <div style="display:flex;gap:24px">
     <a href="#">GITHUB</a>
     <a href="#">LINKEDIN</a>
-    <a href="mailto:hello@inkconsulting.xyz">EMAIL</a>
+    <a href="/cdn-cgi/l/email-protection#a9c1ccc5c5c6e9c0c7c2cac6c7dadcc5ddc0c7ce87d1d0d3">EMAIL</a>
   </div>
 </footer>
 
 <!-- ══════════════ SCRIPTS ══════════════ -->
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
   const dropTarget = document.getElementById('drop-target');
   const dropZone   = document.getElementById('drop-zone');
   const heroMV     = document.getElementById('hero-mv');
@@ -439,10 +439,4 @@
     setTimeout(() => feed.classList.remove('flash'), 900);
   }
 
-  document.getElementById('post-btn').addEventListener('click', postMessage);
-  mEl.addEventListener('keypress', e => {
-    if (e.key === 'Enter') postMessage();
-  });
-
-  renderFeed();
-</script>
+  document.getElementById('post-btn').ad
