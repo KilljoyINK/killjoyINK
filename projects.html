@@ -81,6 +81,7 @@
       margin: 0 auto 60px;
     }
 
+    /* CARD */
     .proj-card {
       background: var(--bg-1);
       cursor: none;
@@ -95,16 +96,21 @@
     .proj-card:hover .card-num { color: var(--accent); }
     .proj-card:hover .card-arrow { opacity: 1; }
 
+    /* Live model preview */
     .card-preview {
       aspect-ratio: 1 / 1;
       background: var(--bg-0);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       position: relative;
       overflow: hidden;
       border-bottom: 1px solid var(--border);
     }
+    .card-preview model-viewer {
+      width: 100%;
+      height: 100%;
+      --poster-color: transparent;
+      background: radial-gradient(ellipse at center, #04101a 0%, var(--bg-0) 100%);
+    }
+    /* grid overlay on hover */
     .card-preview::before {
       content: '';
       position: absolute; inset: 0;
@@ -112,28 +118,26 @@
         linear-gradient(rgba(0,200,255,0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0,200,255,0.05) 1px, transparent 1px);
       background-size: 22% 22%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity .2s;
     }
-    .card-icon {
-      width: 34px; height: 34px;
-      border: 1px solid var(--border-hi);
-      display: flex; align-items: center; justify-content: center;
-      position: relative; z-index: 1;
-    }
-    .card-icon svg {
-      width: 16px; height: 16px;
-      fill: none; stroke: var(--text-mid); stroke-width: 1.5;
-    }
+    .proj-card:hover .card-preview::before { opacity: 1; }
+
     .card-indicator {
       position: absolute; top: 8px; right: 8px;
       width: 4px; height: 4px;
       border-radius: 50%;
       background: var(--border-hi);
       transition: background .15s;
+      z-index: 2;
     }
     .card-arrow {
       position: absolute; top: 8px; left: 10px;
       font-size: 10px; color: var(--accent);
       opacity: 0; transition: opacity .15s;
+      z-index: 2;
     }
 
     .card-info {
@@ -253,7 +257,7 @@
     .modal-desc-text { font-size: 11px; line-height: 1.8; color: var(--text-mid); }
     .modal-tags { display: flex; flex-wrap: wrap; gap: 5px; }
     .modal-tag {
-      font-size: 8px; letter-spacing: .12px;
+      font-size: 8px; letter-spacing: .12em;
       padding: 2px 7px;
       border: 1px solid var(--border);
       color: var(--text-dim);
@@ -490,14 +494,24 @@
     grid.innerHTML = '';
     countNum.textContent  = projects.length;
     countDisp.textContent = projects.length;
+
     projects.forEach((p, idx) => {
       const card = document.createElement('div');
       card.className = 'proj-card';
       card.innerHTML = `
         <div class="card-preview">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          </div>
+          <model-viewer
+            src="${p.src}"
+            alt="${p.title}"
+            auto-rotate
+            auto-rotate-delay="1000"
+            rotation-per-second="12deg"
+            shadow-intensity="1"
+            exposure=".85"
+            environment-image="neutral"
+            loading="lazy"
+            camera-controls
+          ></model-viewer>
           <div class="card-indicator"></div>
           <div class="card-arrow">↗</div>
         </div>
