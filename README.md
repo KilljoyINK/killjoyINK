@@ -1,6 +1,6 @@
 # Portfolio / Art Direction Studio — GitHub Pages
 
-A minimal, cinematic portfolio.
+A minimal, cinematic attempt at a portfolio.
 
 ---
 
